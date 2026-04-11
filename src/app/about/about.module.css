@@ -1,0 +1,48 @@
+.page {
+  min-height: 100vh;
+  background: #fffaf4;
+  color: #231812;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  padding: 2rem 1rem 3rem;
+}
+
+.shell {
+  width: min(900px, 92vw);
+  margin: 0 auto;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e7d8c8;
+  border-radius: 16px;
+  padding: clamp(1.2rem, 2vw, 2rem);
+}
+
+.title {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+}
+
+.copy {
+  margin: 0 0 1rem;
+  color: #4f4038;
+  line-height: 1.7;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #fff;
+  background: #800000;
+}
+
+.back:hover {
+  background: #4f0303;
+}

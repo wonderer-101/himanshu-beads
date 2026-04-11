@@ -1,0 +1,216 @@
+.card {
+  min-width: 206px;
+  width: min(206px, 68vw);
+}
+
+.cardLink {
+  display: block;
+}
+
+.mediaWrap {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8f2ea;
+  aspect-ratio: 0.82;
+}
+
+.mediaImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mediaFallback {
+  width: 100%;
+  height: 100%;
+}
+
+.saleBadge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background: #f0be54;
+  color: #fff;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 0.2rem 0.46rem 0.26rem;
+  border-radius: 0 0 8px 0;
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #e7e7e7;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.65) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+.skeletonSale {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 62px;
+  height: 24px;
+  border-radius: 0 0 8px 0;
+  background: #d9d9d9;
+  z-index: 1;
+}
+
+.skeletonMeta {
+  margin-top: 0.58rem;
+  display: grid;
+  gap: 0.46rem;
+}
+
+.skeletonLinePrimary {
+  width: 86%;
+  height: 0.96rem;
+  border-radius: 8px;
+}
+
+.skeletonLineSecondary {
+  width: 56%;
+  height: 0.84rem;
+  border-radius: 8px;
+}
+
+.title {
+  margin-top: 0.52rem;
+  color: #171717;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(0.98rem, 1.3vw, 1.28rem);
+  line-height: 1.18;
+  font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ratingRow {
+  margin-top: 0.22rem;
+  display: flex;
+  align-items: center;
+  gap: 0.36rem;
+}
+
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.08rem;
+  color: #24a16d;
+}
+
+.reviewCount {
+  color: #1c1c1c;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.84rem;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.priceRow {
+  margin-top: 0.24rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.48rem;
+}
+
+.price {
+  color: #161616;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(1.42rem, 1.9vw, 1.72rem);
+  line-height: 1;
+  font-weight: 700;
+}
+
+.oldPrice {
+  color: #8e8a87;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 0.96rem;
+  text-decoration: line-through;
+  line-height: 1;
+}
+
+.toneRuby {
+  background:
+    radial-gradient(circle at 72% 22%, rgba(255, 252, 248, 0.28), transparent 48%),
+    linear-gradient(145deg, #b01526 0%, #7f081b 80%);
+}
+
+.toneGold {
+  background:
+    radial-gradient(circle at 28% 23%, rgba(255, 250, 239, 0.45), transparent 48%),
+    linear-gradient(145deg, #dcb774 0%, #b88c42 78%);
+}
+
+.toneChampagne {
+  background:
+    radial-gradient(circle at 60% 20%, rgba(255, 255, 255, 0.5), transparent 45%),
+    linear-gradient(145deg, #d8c59d 0%, #bda980 82%);
+}
+
+.toneRose {
+  background:
+    radial-gradient(circle at 38% 24%, rgba(255, 255, 255, 0.45), transparent 47%),
+    linear-gradient(145deg, #e4baa6 0%, #c9977e 80%);
+}
+
+.toneIvory {
+  background:
+    radial-gradient(circle at 68% 30%, rgba(255, 255, 255, 0.7), transparent 48%),
+    linear-gradient(145deg, #efe4cf 0%, #dcc9a8 82%);
+}
+
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 680px) {
+  .card {
+    min-width: 178px;
+    width: min(178px, 72vw);
+  }
+
+  .saleBadge {
+    font-size: 0.98rem;
+  }
+
+  .reviewCount {
+    font-size: 0.76rem;
+  }
+
+  .price {
+    font-size: 1.24rem;
+  }
+
+  .oldPrice {
+    font-size: 0.84rem;
+  }
+
+  .skeletonSale {
+    width: 54px;
+    height: 22px;
+  }
+}
