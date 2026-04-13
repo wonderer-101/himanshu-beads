@@ -1,7 +1,8 @@
 /**
  * GET /api/auth/shopify/me
  * Returns the current customer profile from the Customer Account API.
- * Returns 401 if not logged in, 200 with customer data if logged in.
+ * Returns 200 with { customer: null } when not logged in.
+ * Returns 200 with customer data when logged in.
  * Used by the React AuthContext to determine login state on the client.
  */
 import { NextResponse } from "next/server";
@@ -28,12 +29,12 @@ export async function GET() {
         refreshed = await refreshAccessToken(refreshToken);
         accessToken = refreshed.accessToken;
       } catch {
-        return NextResponse.json({ customer: null }, { status: 401 });
+        return NextResponse.json({ customer: null }, { status: 200 });
       }
     }
 
     if (!accessToken) {
-      return NextResponse.json({ customer: null }, { status: 401 });
+      return NextResponse.json({ customer: null }, { status: 200 });
     }
 
     // First attempt with existing token
@@ -46,12 +47,12 @@ export async function GET() {
         accessToken = refreshed.accessToken;
         customer = await fetchCustomerProfile(accessToken);
       } catch {
-        return NextResponse.json({ customer: null }, { status: 401 });
+        return NextResponse.json({ customer: null }, { status: 200 });
       }
     }
 
     if (!customer) {
-      return NextResponse.json({ customer: null }, { status: 401 });
+      return NextResponse.json({ customer: null }, { status: 200 });
     }
 
     const response = NextResponse.json({ customer });
@@ -79,6 +80,6 @@ export async function GET() {
     return response;
   } catch (err) {
     console.error("[shopify/me]", err);
-    return NextResponse.json({ customer: null }, { status: 401 });
+    return NextResponse.json({ customer: null }, { status: 500 });
   }
 }
