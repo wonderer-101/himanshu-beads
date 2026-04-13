@@ -6,33 +6,27 @@
  */
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { COOKIE_ACCESS_TOKEN, COOKIE_REFRESH_TOKEN, refreshAccessToken, serializeCookie, makeTokenCookieOptions } from "@/lib/shopify/customerAuth";
+import {
+  COOKIE_ACCESS_TOKEN,
+  COOKIE_REFRESH_TOKEN,
+  refreshAccessToken,
+  serializeCookie,
+  makeTokenCookieOptions,
+  fetchCustomerProfile,
+} from "@/lib/shopify/customerAuth";
 
 export async function GET() {
   try {
     const cookieStore = await cookies();
     let accessToken = cookieStore.get(COOKIE_ACCESS_TOKEN)?.value;
     const refreshToken = cookieStore.get(COOKIE_REFRESH_TOKEN)?.value;
+    let refreshed = null;
 
-    // If no access token but we have a refresh token, try to refresh
+    // If no access token but we have a refresh token, refresh first.
     if (!accessToken && refreshToken) {
       try {
-        const refreshed = await refreshAccessToken(refreshToken);
+        refreshed = await refreshAccessToken(refreshToken);
         accessToken = refreshed.accessToken;
-
-        // We'll set the new cookie in the response below
-        const response = NextResponse.json(await queryCustomer(accessToken));
-        response.headers.append(
-          "Set-Cookie",
-          serializeCookie(COOKIE_ACCESS_TOKEN, accessToken, makeTokenCookieOptions(refreshed.expiresIn || 86400))
-        );
-        if (refreshed.refreshToken) {
-          response.headers.append(
-            "Set-Cookie",
-            serializeCookie(COOKIE_REFRESH_TOKEN, refreshed.refreshToken, makeTokenCookieOptions(60 * 60 * 24 * 30))
-          );
-        }
-        return response;
       } catch {
         return NextResponse.json({ customer: null }, { status: 401 });
       }
@@ -42,37 +36,49 @@ export async function GET() {
       return NextResponse.json({ customer: null }, { status: 401 });
     }
 
-    const customer = await queryCustomer(accessToken);
-    return NextResponse.json({ customer });
+    // First attempt with existing token
+    let customer = await fetchCustomerProfile(accessToken);
+
+    // If token is stale, retry once after refresh
+    if (!customer && refreshToken) {
+      try {
+        refreshed = await refreshAccessToken(refreshToken);
+        accessToken = refreshed.accessToken;
+        customer = await fetchCustomerProfile(accessToken);
+      } catch {
+        return NextResponse.json({ customer: null }, { status: 401 });
+      }
+    }
+
+    if (!customer) {
+      return NextResponse.json({ customer: null }, { status: 401 });
+    }
+
+    const response = NextResponse.json({ customer });
+    if (refreshed?.accessToken) {
+      response.headers.append(
+        "Set-Cookie",
+        serializeCookie(
+          COOKIE_ACCESS_TOKEN,
+          refreshed.accessToken,
+          makeTokenCookieOptions(refreshed.expiresIn || 86400)
+        )
+      );
+      if (refreshed.refreshToken) {
+        response.headers.append(
+          "Set-Cookie",
+          serializeCookie(
+            COOKIE_REFRESH_TOKEN,
+            refreshed.refreshToken,
+            makeTokenCookieOptions(60 * 60 * 24 * 30)
+          )
+        );
+      }
+    }
+
+    return response;
   } catch (err) {
     console.error("[shopify/me]", err);
-    return NextResponse.json({ customer: null }, { status: 500 });
+    return NextResponse.json({ customer: null }, { status: 401 });
   }
-}
-
-async function queryCustomer(accessToken) {
-  const storeDomain = process.env.SHOPIFY_STORE_DOMAIN;
-  const apiUrl = `https://${storeDomain}/account/customer/api/2026-01/graphql`;
-
-  const query = `{
-    customer {
-      id
-      firstName
-      lastName
-      emailAddress { emailAddress }
-    }
-  }`;
-
-  const res = await fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: accessToken,
-    },
-    body: JSON.stringify({ query }),
-  });
-
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.data?.customer ?? null;
 }

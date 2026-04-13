@@ -15,9 +15,9 @@ import {
   COOKIE_VERIFIER,
 } from "@/lib/shopify/customerAuth";
 
-export async function GET() {
+export async function GET(request) {
+  const appUrl = new URL(request.url).origin;
   try {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const redirectUri = `${appUrl}/api/auth/shopify/callback`;
 
     // Generate PKCE params
@@ -40,7 +40,7 @@ export async function GET() {
   } catch (err) {
     console.error("[shopify/login]", err);
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?auth_error=login_failed`
+      `${appUrl}/?auth_error=login_failed`
     );
   }
 }

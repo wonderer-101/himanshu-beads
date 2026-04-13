@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   Package, LogOut, User, Mail, ShoppingBag,
   ChevronRight, Clock, CheckCircle, XCircle, Truck
@@ -44,16 +43,16 @@ function StatusBadge({ status }) {
 
 export default function ProfilePage() {
   const { customer, loading } = useAuth();
-  const router = useRouter();
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("orders");
 
   useEffect(() => {
     if (!loading && !customer) {
-      router.replace("/api/auth/shopify/login");
+      // OAuth login is a cross-origin redirect; use hard browser navigation.
+      window.location.assign("/api/auth/shopify/login");
     }
-  }, [customer, loading, router]);
+  }, [customer, loading]);
 
   useEffect(() => {
     if (!customer) return;

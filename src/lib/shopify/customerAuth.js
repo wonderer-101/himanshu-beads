@@ -138,15 +138,59 @@ export async function refreshAccessToken(refreshToken) {
   };
 }
 
+function normalizeStoreDomain(storeDomain) {
+  if (!storeDomain) return "";
+  return storeDomain.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "");
+}
+
+export function getCustomerApiUrl() {
+  const storeDomain = normalizeStoreDomain(process.env.SHOPIFY_STORE_DOMAIN);
+  if (!storeDomain) {
+    throw new Error("SHOPIFY_STORE_DOMAIN is not set for Customer Account API.");
+  }
+
+  const apiVersion =
+    (process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_VERSION ||
+      process.env.SHOPIFY_STOREFRONT_API_VERSION ||
+      "2026-04").trim();
+
+  return `https://${storeDomain}/account/customer/api/${apiVersion}/graphql`;
+}
+
+export async function queryCustomerApi(accessToken, query, variables) {
+  const apiUrl = getCustomerApiUrl();
+
+  const res = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: accessToken, // Raw shcat_* token, NOT "Bearer {token}"
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  const raw = await res.text();
+  let payload = null;
+  try {
+    payload = raw ? JSON.parse(raw) : {};
+  } catch {
+    payload = null;
+  }
+
+  if (!res.ok) {
+    throw new Error(`Customer API request failed (${res.status}): ${raw?.slice(0, 240) || "No body"}`);
+  }
+
+  if (payload?.errors?.length) {
+    throw new Error(`Customer API GraphQL errors: ${JSON.stringify(payload.errors)}`);
+  }
+
+  return payload?.data ?? null;
+}
+
 // -- Fetch customer profile via Customer Account API --------------------
 
 export async function fetchCustomerProfile(accessToken) {
-  const storeDomain = process.env.SHOPIFY_STORE_DOMAIN;
-  const apiVersion = process.env.SHOPIFY_STOREFRONT_API_VERSION || "2026-04";
-
-  // GraphQL endpoint for Customer Account API
-  const apiUrl = `https://${storeDomain}/account/customer/api/${apiVersion}/graphql`;
-
   const query = `{
     customer {
       id
@@ -156,18 +200,13 @@ export async function fetchCustomerProfile(accessToken) {
     }
   }`;
 
-  const res = await fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: accessToken, // Raw shcat_* token, NOT "Bearer {token}"
-    },
-    body: JSON.stringify({ query }),
-  });
-
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.data?.customer ?? null;
+  try {
+    const data = await queryCustomerApi(accessToken, query);
+    return data?.customer ?? null;
+  } catch (err) {
+    console.error("[shopify/customer-profile]", err);
+    return null;
+  }
 }
 
 // -- Cookie helpers -----------------------------------------------------

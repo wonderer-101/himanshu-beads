@@ -4,7 +4,12 @@
  */
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { COOKIE_ACCESS_TOKEN, COOKIE_REFRESH_TOKEN, refreshAccessToken, serializeCookie, makeTokenCookieOptions } from "@/lib/shopify/customerAuth";
+import {
+  COOKIE_ACCESS_TOKEN,
+  COOKIE_REFRESH_TOKEN,
+  refreshAccessToken,
+  queryCustomerApi,
+} from "@/lib/shopify/customerAuth";
 
 const ORDER_QUERY = `{
   customer {
@@ -53,19 +58,8 @@ export async function GET() {
       return NextResponse.json({ orders: [] }, { status: 401 });
     }
 
-    const storeDomain = process.env.SHOPIFY_STORE_DOMAIN;
-    const apiUrl = `https://${storeDomain}/account/customer/api/2026-01/graphql`;
-
-    const res = await fetch(apiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: accessToken },
-      body: JSON.stringify({ query: ORDER_QUERY }),
-    });
-
-    if (!res.ok) return NextResponse.json({ orders: [] }, { status: 200 });
-
-    const data = await res.json();
-    const edges = data?.data?.customer?.orders?.edges || [];
+    const data = await queryCustomerApi(accessToken, ORDER_QUERY);
+    const edges = data?.customer?.orders?.edges || [];
     const orders = edges.map(({ node }) => ({
       id: node.id,
       name: node.name,

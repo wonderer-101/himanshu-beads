@@ -9,8 +9,8 @@ import {
   COOKIE_REFRESH_TOKEN,
 } from "@/lib/shopify/customerAuth";
 
-export async function GET() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+export async function GET(request) {
+  const appUrl = new URL(request.url).origin;
   const clearOpts = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

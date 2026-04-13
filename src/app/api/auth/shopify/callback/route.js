@@ -17,7 +17,7 @@ import {
 } from "@/lib/shopify/customerAuth";
 
 export async function GET(request) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = new URL(request.url).origin;
   const redirectUri = `${appUrl}/api/auth/shopify/callback`;
 
   try {
