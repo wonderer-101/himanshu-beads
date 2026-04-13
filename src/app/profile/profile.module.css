@@ -486,6 +486,237 @@
   color: #fff;
 }
 
+.sectionHeading {
+  margin: 0;
+  color: #1e1511;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.profileEditForm,
+.addressForm {
+  margin-top: 1rem;
+  border: 1px solid #efe3d8;
+  border-radius: 14px;
+  padding: 0.9rem;
+  background: #fffaf6;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.formField span {
+  color: #816f62;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.formField input {
+  border: 1px solid #dbc9ba;
+  border-radius: 10px;
+  min-height: 36px;
+  padding: 0.5rem 0.65rem;
+  color: #2b1f19;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  background: #fff;
+}
+
+.formField input:focus {
+  outline: none;
+  border-color: #800000;
+  box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.12);
+}
+
+.formActions {
+  margin-top: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.primaryActionBtn,
+.secondaryActionBtn {
+  border-radius: 999px;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.45rem 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+}
+
+.primaryActionBtn {
+  border: 1px solid #800000;
+  background: #800000;
+  color: #fff;
+}
+
+.primaryActionBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.secondaryActionBtn {
+  border: 1px solid #cdb7a6;
+  background: #fff;
+  color: #6d584d;
+}
+
+.secondaryActionBtn:hover {
+  border-color: #800000;
+  color: #800000;
+}
+
+.formError {
+  color: #8e1c1c;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.formSuccess {
+  color: #1e7a44;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.addressSection {
+  margin-top: 1rem;
+}
+
+.addressSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.inlineHint {
+  margin-top: 0.6rem;
+  color: #7e6d62;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.8rem;
+}
+
+.addressList {
+  margin-top: 0.7rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.addressCard {
+  border: 1px solid #eddfd4;
+  border-radius: 12px;
+  padding: 0.72rem 0.8rem;
+  background: #fff;
+}
+
+.addressTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.addressTitleWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #2b1e18;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.8rem;
+}
+
+.defaultBadge {
+  border-radius: 999px;
+  background: #f8eadb;
+  color: #7a3c06;
+  border: 1px solid #e6c9a7;
+  padding: 0.08rem 0.45rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.addressActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.addressActions button {
+  border: 1px solid #ddcabc;
+  background: #fff;
+  color: #6d584d;
+  border-radius: 999px;
+  padding: 0.25rem 0.62rem;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.addressActions button:hover {
+  border-color: #800000;
+  color: #800000;
+}
+
+.addressText {
+  margin: 0.55rem 0 0;
+  color: #3a2b24;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.addressSubText {
+  margin: 0.25rem 0 0;
+  color: #7e6d62;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.75rem;
+}
+
+.checkboxRow {
+  margin-top: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #5b473d;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.checkboxRow input {
+  margin: 0;
+}
+
 /* Loading */
 .loadingShell {
   display: flex;
@@ -535,6 +766,10 @@
   }
 
   .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formGrid {
     grid-template-columns: 1fr;
   }
 }
