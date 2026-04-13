@@ -43,12 +43,19 @@ export async function GET() {
     // If token is stale, retry once after refresh
     if (!customer && refreshToken) {
       try {
+        console.log("[shopify/me] access token returned null, attempting refresh...");
         refreshed = await refreshAccessToken(refreshToken);
         accessToken = refreshed.accessToken;
         customer = await fetchCustomerProfile(accessToken);
-      } catch {
+      } catch (refreshErr) {
+        console.error("[shopify/me] refresh failed:", refreshErr?.message);
         return NextResponse.json({ customer: null }, { status: 200 });
       }
+    }
+
+    if (!customer) {
+      console.warn("[shopify/me] fetchCustomerProfile returned null. Check SHOPIFY_STORE_DOMAIN and token validity.");
+      console.warn("[shopify/me] SHOPIFY_STORE_DOMAIN =", process.env.SHOPIFY_STORE_DOMAIN || "(NOT SET)");
     }
 
     if (!customer) {

@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Package, LogOut, User, Mail, ShoppingBag,
-  ChevronRight, Clock, CheckCircle, XCircle, Truck
+  ChevronRight, Clock, CheckCircle, XCircle, Truck, AlertCircle, RefreshCcw
 } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { useAuth } from "@/components/auth/AuthContext";
 import styles from "./profile.module.css";
+
+const SESSION_KEY = "shopify_auth_attempts";
 
 function formatMoney(amount, currencyCode = "INR") {
   return new Intl.NumberFormat("en-IN", {
@@ -46,12 +48,31 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("orders");
+  const [authFailed, setAuthFailed] = useState(false);
 
   useEffect(() => {
-    if (!loading && !customer) {
-      // OAuth login is a cross-origin redirect; use hard browser navigation.
-      window.location.assign("/api/auth/shopify/login");
+    if (loading) return;
+
+    if (customer) {
+      // Successfully logged in -- clear any previous attempt counter
+      sessionStorage.removeItem(SESSION_KEY);
+      return;
     }
+
+    // Not logged in. Check how many times we've already tried to redirect.
+    // This prevents an infinite loop when the token is set but the Customer API
+    // call keeps failing (e.g. wrong env vars in production).
+    const attempts = parseInt(sessionStorage.getItem(SESSION_KEY) || "0", 10);
+    if (attempts >= 1) {
+      // We already sent the user through login and it still failed -- stop looping.
+      sessionStorage.removeItem(SESSION_KEY);
+      setAuthFailed(true);
+      return;
+    }
+
+    sessionStorage.setItem(SESSION_KEY, String(attempts + 1));
+    // Hard browser redirect -- avoids Next.js RSC fetch / CORS issues.
+    window.location.assign("/api/auth/shopify/login");
   }, [customer, loading]);
 
   useEffect(() => {
@@ -63,6 +84,42 @@ export default function ProfilePage() {
       .finally(() => setOrdersLoading(false));
   }, [customer]);
 
+  // Auth failed state -- show error instead of looping
+  if (authFailed) {
+    return (
+      <>
+        <Header />
+        <main className={styles.page}>
+          <div className={styles.loadingShell}>
+            <AlertCircle size={36} style={{ color: "#800000", marginBottom: "0.5rem" }} />
+            <p style={{ color: "#2a1810", fontWeight: 700, fontSize: "1rem" }}>
+              Could not load your account
+            </p>
+            <p style={{ color: "#7a6a5e", fontSize: "0.85rem", maxWidth: 340, textAlign: "center" }}>
+              Authentication succeeded but we could not fetch your profile. This is likely a server configuration issue.
+            </p>
+            <div style={{ display: "flex", gap: "0.7rem", marginTop: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
+              <button
+                onClick={() => { sessionStorage.removeItem(SESSION_KEY); window.location.assign("/api/auth/shopify/login"); }}
+                style={{ background: "#800000", color: "#fff", border: 0, borderRadius: 999, padding: "0.6rem 1.3rem", fontWeight: 700, fontSize: "0.85rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem" }}
+              >
+                <RefreshCcw size={14} /> Try again
+              </button>
+              <Link
+                href="/"
+                style={{ border: "1px solid #800000", color: "#800000", borderRadius: 999, padding: "0.6rem 1.3rem", fontWeight: 700, fontSize: "0.85rem" }}
+              >
+                Go home
+              </Link>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  // Still loading or redirect pending
   if (loading || !customer) {
     return (
       <>
