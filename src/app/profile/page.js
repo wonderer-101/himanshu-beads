@@ -11,13 +11,9 @@ import Footer from "@/components/layout/Footer";
 import { useAuth } from "@/components/auth/AuthContext";
 import styles from "./profile.module.css";
 
-const storefrontDomain = (process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "")
-  .trim()
-  .replace(/^https?:\/\//, "")
-  .replace(/\/+$/, "");
-const customerAccountUrl = `https://${storefrontDomain}/account`;
-const customerProfileUrl = `${customerAccountUrl}/profile`;
-const customerAddressesUrl = `${customerAccountUrl}/addresses`;
+const customerAccountUrl = "/api/auth/shopify/account";
+const customerProfileUrl = "/api/auth/shopify/account/profile";
+const customerAddressesUrl = "/api/auth/shopify/account/addresses";
 
 function formatMoney(amount, currencyCode = "INR") {
   return new Intl.NumberFormat("en-IN", {
