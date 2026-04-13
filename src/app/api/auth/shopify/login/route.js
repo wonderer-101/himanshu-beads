@@ -10,13 +10,14 @@ import {
   generateCodeChallenge,
   generateState,
   buildAuthorizationUrl,
+  resolveAppUrl,
   serializeCookie,
   COOKIE_STATE,
   COOKIE_VERIFIER,
 } from "@/lib/shopify/customerAuth";
 
 export async function GET(request) {
-  const appUrl = new URL(request.url).origin;
+  const appUrl = resolveAppUrl(request);
   try {
     const redirectUri = `${appUrl}/api/auth/shopify/callback`;
 

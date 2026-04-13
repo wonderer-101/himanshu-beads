@@ -8,12 +8,31 @@ import {
   COOKIE_ACCESS_TOKEN,
   COOKIE_REFRESH_TOKEN,
   refreshAccessToken,
+  resolveAppUrl,
   queryCustomerApi,
 } from "@/lib/shopify/customerAuth";
 
-const ORDER_QUERY = `{
+const ORDER_QUERY_PRIMARY = `{
   customer {
-    orders(first: 20, sortKey: PROCESSED_AT, reverse: true) {
+    orders(first: 20) {
+      edges {
+        node {
+          id
+          name
+          processedAt
+          financialStatus
+          fulfillmentStatus
+          statusPageUrl
+          totalPrice { amount currencyCode }
+        }
+      }
+    }
+  }
+}`;
+
+const ORDER_QUERY_FALLBACK = `{
+  customer {
+    orders(first: 20) {
       edges {
         node {
           id
@@ -23,16 +42,6 @@ const ORDER_QUERY = `{
           fulfillmentStatus
           statusPageUrl
           currentTotalPrice { amount currencyCode }
-          lineItems(first: 5) {
-            edges {
-              node {
-                title
-                quantity
-                image { url altText }
-                price { amount currencyCode }
-              }
-            }
-          }
         }
       }
     }
@@ -41,7 +50,7 @@ const ORDER_QUERY = `{
 
 export async function GET(request) {
   try {
-    const appUrl = new URL(request.url).origin;
+    const appUrl = resolveAppUrl(request);
     const cookieStore = await cookies();
     let accessToken = cookieStore.get(COOKIE_ACCESS_TOKEN)?.value;
     const refreshToken = cookieStore.get(COOKIE_REFRESH_TOKEN)?.value;
@@ -59,7 +68,14 @@ export async function GET(request) {
       return NextResponse.json({ orders: [] }, { status: 401 });
     }
 
-    const data = await queryCustomerApi(accessToken, ORDER_QUERY, undefined, appUrl);
+    let data;
+    try {
+      data = await queryCustomerApi(accessToken, ORDER_QUERY_PRIMARY, undefined, appUrl);
+    } catch (primaryErr) {
+      console.warn("[shopify/orders] primary query failed, retrying fallback:", primaryErr?.message);
+      data = await queryCustomerApi(accessToken, ORDER_QUERY_FALLBACK, undefined, appUrl);
+    }
+
     const edges = data?.customer?.orders?.edges || [];
     const orders = edges.map(({ node }) => ({
       id: node.id,
@@ -68,18 +84,13 @@ export async function GET(request) {
       financialStatus: node.financialStatus,
       fulfillmentStatus: node.fulfillmentStatus,
       statusPageUrl: node.statusPageUrl,
-      totalPrice: node.currentTotalPrice,
-      lineItems: node.lineItems?.edges?.map(({ node: li }) => ({
-        title: li.title,
-        quantity: li.quantity,
-        image: li.image,
-        price: li.price,
-      })) || [],
+      totalPrice: node.totalPrice || node.currentTotalPrice || null,
+      lineItems: [],
     }));
 
     return NextResponse.json({ orders });
   } catch (err) {
     console.error("[shopify/orders]", err);
-    return NextResponse.json({ orders: [] }, { status: 500 });
+    return NextResponse.json({ orders: [] }, { status: 200 });
   }
 }

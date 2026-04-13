@@ -16,7 +16,11 @@ const defaultNavItems = [
   { label: "Sale", href: "/collections/sale" },
 ];
 
-const storefrontSearchUrl = "https://himanshu-beadss.myshopify.com/search";
+const storefrontDomain = (process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "")
+  .trim()
+  .replace(/^https?:\/\//, "")
+  .replace(/\/+$/, "");
+const storefrontSearchUrl = `https://${storefrontDomain}/search`;
 
 function NavLink({ href, children, active, onClick }) {
   if (href.startsWith("/")) {

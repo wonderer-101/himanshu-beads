@@ -458,6 +458,34 @@
   font-weight: 700;
 }
 
+.detailsActions {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.detailsActionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #800000;
+  color: #800000;
+  border-radius: 999px;
+  padding: 0.45rem 0.95rem;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.detailsActionBtn:hover {
+  background: #800000;
+  color: #fff;
+}
+
 /* Loading */
 .loadingShell {
   display: flex;

@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import {
   exchangeCodeForToken,
+  resolveAppUrl,
   serializeCookie,
   makeTokenCookieOptions,
   COOKIE_ACCESS_TOKEN,
@@ -17,7 +18,7 @@ import {
 } from "@/lib/shopify/customerAuth";
 
 export async function GET(request) {
-  const appUrl = new URL(request.url).origin;
+  const appUrl = resolveAppUrl(request);
   const redirectUri = `${appUrl}/api/auth/shopify/callback`;
 
   try {

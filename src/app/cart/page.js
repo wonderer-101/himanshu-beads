@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Minus, Plus, ShieldCheck, ShoppingBag, Trash2, Truck } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
+import { useAuth } from "@/components/auth/AuthContext";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import styles from "./cart.module.css";
@@ -16,6 +17,7 @@ function formatMoney(amount, currencyCode = "INR") {
 }
 
 export default function CartPage() {
+  const { customer, loading: authLoading } = useAuth();
   const {
     hasHydrated,
     items,
@@ -27,6 +29,18 @@ export default function CartPage() {
     removeItem,
     clearCart,
   } = useCart();
+
+  function handleCheckout(e) {
+    e.preventDefault();
+    if (authLoading) return;
+    if (!customer) {
+      window.location.assign("/api/auth/shopify/login");
+      return;
+    }
+    if (checkoutUrl) {
+      window.location.assign(checkoutUrl);
+    }
+  }
 
   let content;
 
@@ -155,7 +169,7 @@ export default function CartPage() {
             </div>
             <p className={styles.summaryHint}>Taxes and shipping are calculated on Shopify checkout.</p>
             {checkoutUrl ? (
-              <a href={checkoutUrl} className={styles.primaryBtn} target="_blank" rel="noreferrer">
+              <a href={checkoutUrl} className={styles.primaryBtn} onClick={handleCheckout}>
                 Checkout
               </a>
             ) : (

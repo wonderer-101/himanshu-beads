@@ -4,14 +4,20 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Package, LogOut, User, Mail, ShoppingBag,
-  ChevronRight, Clock, CheckCircle, XCircle, Truck, AlertCircle, RefreshCcw
+  ChevronRight, Clock, CheckCircle, XCircle, Truck
 } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { useAuth } from "@/components/auth/AuthContext";
 import styles from "./profile.module.css";
 
-const SESSION_KEY = "shopify_auth_attempts";
+const storefrontDomain = (process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "")
+  .trim()
+  .replace(/^https?:\/\//, "")
+  .replace(/\/+$/, "");
+const customerAccountUrl = `https://${storefrontDomain}/account`;
+const customerProfileUrl = `${customerAccountUrl}/profile`;
+const customerAddressesUrl = `${customerAccountUrl}/addresses`;
 
 function formatMoney(amount, currencyCode = "INR") {
   return new Intl.NumberFormat("en-IN", {
@@ -48,31 +54,11 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("orders");
-  const [authFailed, setAuthFailed] = useState(false);
 
   useEffect(() => {
-    if (loading) return;
-
-    if (customer) {
-      // Successfully logged in -- clear any previous attempt counter
-      sessionStorage.removeItem(SESSION_KEY);
-      return;
+    if (!loading && !customer) {
+      window.location.replace("/");
     }
-
-    // Not logged in. Check how many times we've already tried to redirect.
-    // This prevents an infinite loop when the token is set but the Customer API
-    // call keeps failing (e.g. wrong env vars in production).
-    const attempts = parseInt(sessionStorage.getItem(SESSION_KEY) || "0", 10);
-    if (attempts >= 1) {
-      // We already sent the user through login and it still failed -- stop looping.
-      sessionStorage.removeItem(SESSION_KEY);
-      setAuthFailed(true);
-      return;
-    }
-
-    sessionStorage.setItem(SESSION_KEY, String(attempts + 1));
-    // Hard browser redirect -- avoids Next.js RSC fetch / CORS issues.
-    window.location.assign("/api/auth/shopify/login");
   }, [customer, loading]);
 
   useEffect(() => {
@@ -83,41 +69,6 @@ export default function ProfilePage() {
       .catch(() => setOrders([]))
       .finally(() => setOrdersLoading(false));
   }, [customer]);
-
-  // Auth failed state -- show error instead of looping
-  if (authFailed) {
-    return (
-      <>
-        <Header />
-        <main className={styles.page}>
-          <div className={styles.loadingShell}>
-            <AlertCircle size={36} style={{ color: "#800000", marginBottom: "0.5rem" }} />
-            <p style={{ color: "#2a1810", fontWeight: 700, fontSize: "1rem" }}>
-              Could not load your account
-            </p>
-            <p style={{ color: "#7a6a5e", fontSize: "0.85rem", maxWidth: 340, textAlign: "center" }}>
-              Authentication succeeded but we could not fetch your profile. This is likely a server configuration issue.
-            </p>
-            <div style={{ display: "flex", gap: "0.7rem", marginTop: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
-              <button
-                onClick={() => { sessionStorage.removeItem(SESSION_KEY); window.location.assign("/api/auth/shopify/login"); }}
-                style={{ background: "#800000", color: "#fff", border: 0, borderRadius: 999, padding: "0.6rem 1.3rem", fontWeight: 700, fontSize: "0.85rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem" }}
-              >
-                <RefreshCcw size={14} /> Try again
-              </button>
-              <Link
-                href="/"
-                style={{ border: "1px solid #800000", color: "#800000", borderRadius: 999, padding: "0.6rem 1.3rem", fontWeight: 700, fontSize: "0.85rem" }}
-              >
-                Go home
-              </Link>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
 
   // Still loading or redirect pending
   if (loading || !customer) {
@@ -139,6 +90,11 @@ export default function ProfilePage() {
   const lastName = customer.lastName || "";
   const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Customer";
   const email = customer.emailAddress?.emailAddress || "";
+  const phone =
+    customer.phoneNumber?.phoneNumber ||
+    customer.phoneNumber ||
+    customer.phone ||
+    "";
   const initials = [firstName[0], lastName[0]].filter(Boolean).join("").toUpperCase() || email[0]?.toUpperCase() || "?";
 
   return (
@@ -310,10 +266,25 @@ export default function ProfilePage() {
                     <label>Email Address</label>
                     <span>{email || "--"}</span>
                   </div>
+                  <div className={styles.detailField} style={{ gridColumn: "1 / -1" }}>
+                    <label>Phone Number</label>
+                    <span>{phone || "-- Not added yet --"}</span>
+                  </div>
+                </div>
+                <div className={styles.detailsActions}>
+                  <a href={customerProfileUrl} target="_blank" rel="noreferrer" className={styles.detailsActionBtn}>
+                    Edit Name
+                  </a>
+                  <a href={customerProfileUrl} target="_blank" rel="noreferrer" className={styles.detailsActionBtn}>
+                    Manage Phone
+                  </a>
+                  <a href={customerAddressesUrl} target="_blank" rel="noreferrer" className={styles.detailsActionBtn}>
+                    Manage Addresses
+                  </a>
                 </div>
                 <p className={styles.detailsNote}>
-                  To update your personal details, please visit your
-                  <a href="https://himanshu-beadss.myshopify.com/account" target="_blank" rel="noreferrer">
+                  Profile and address updates are managed securely in your
+                  <a href={customerAccountUrl} target="_blank" rel="noreferrer">
                     {" "}Shopify account page
                   </a>.
                 </p>

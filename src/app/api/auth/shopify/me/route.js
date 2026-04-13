@@ -11,6 +11,7 @@ import {
   COOKIE_ACCESS_TOKEN,
   COOKIE_REFRESH_TOKEN,
   refreshAccessToken,
+  resolveAppUrl,
   serializeCookie,
   makeTokenCookieOptions,
   fetchCustomerProfile,
@@ -18,7 +19,7 @@ import {
 
 export async function GET(request) {
   try {
-    const appUrl = new URL(request.url).origin;
+    const appUrl = resolveAppUrl(request);
     const cookieStore = await cookies();
     let accessToken = cookieStore.get(COOKIE_ACCESS_TOKEN)?.value;
     const refreshToken = cookieStore.get(COOKIE_REFRESH_TOKEN)?.value;

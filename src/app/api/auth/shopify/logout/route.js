@@ -4,13 +4,14 @@
  */
 import { NextResponse } from "next/server";
 import {
+  resolveAppUrl,
   serializeCookie,
   COOKIE_ACCESS_TOKEN,
   COOKIE_REFRESH_TOKEN,
 } from "@/lib/shopify/customerAuth";
 
 export async function GET(request) {
-  const appUrl = new URL(request.url).origin;
+  const appUrl = resolveAppUrl(request);
   const clearOpts = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

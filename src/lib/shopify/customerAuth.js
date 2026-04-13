@@ -21,6 +21,24 @@ export function generateState() {
   return crypto.randomBytes(16).toString("hex");
 }
 
+function isTrueLike(value) {
+  return /^(1|true)$/i.test((value || "").trim());
+}
+
+export function resolveAppUrl(request) {
+  const origin = new URL(request.url).origin;
+  const useSameUrl = isTrueLike(process.env.USE_SAME_URL);
+  if (useSameUrl) {
+    return origin;
+  }
+
+  const configured = (process.env.NEXT_PUBLIC_APP_URL || "")
+    .trim()
+    .replace(/\/+$/, "");
+
+  return configured || origin;
+}
+
 // -- OpenID discovery ---------------------------------------------------
 
 let _openidCache = null;
@@ -227,7 +245,16 @@ export async function queryCustomerApi(accessToken, query, variables, origin) {
 // -- Fetch customer profile via Customer Account API --------------------
 
 export async function fetchCustomerProfile(accessToken, origin) {
-  const query = `{
+  const queryWithPhone = `{
+    customer {
+      id
+      firstName
+      lastName
+      emailAddress { emailAddress }
+      phoneNumber { phoneNumber }
+    }
+  }`;
+  const fallbackQuery = `{
     customer {
       id
       firstName
@@ -237,7 +264,13 @@ export async function fetchCustomerProfile(accessToken, origin) {
   }`;
 
   try {
-    const data = await queryCustomerApi(accessToken, query, undefined, origin);
+    let data;
+    try {
+      data = await queryCustomerApi(accessToken, queryWithPhone, undefined, origin);
+    } catch (err) {
+      // Some stores/schemas may not expose phoneNumber in this context.
+      data = await queryCustomerApi(accessToken, fallbackQuery, undefined, origin);
+    }
     return data?.customer ?? null;
   } catch (err) {
     console.error("[shopify/customer-profile]", err);
