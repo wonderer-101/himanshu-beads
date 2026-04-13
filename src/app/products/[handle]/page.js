@@ -6,7 +6,13 @@ import { getAdminProductByHandle } from "@/lib/shopify/products";
 
 export async function generateMetadata({ params }) {
   const { handle } = await params;
-  const product = await getAdminProductByHandle(handle);
+  let product = null;
+  try {
+    product = await getAdminProductByHandle(handle);
+  } catch (error) {
+    const details = error instanceof Error ? error.message : String(error);
+    console.error("[products/metadata] Product fetch error:", details);
+  }
   if (!product) return { title: "Product Not Found" };
   return {
     title: `${product.title} | Himanshu Beads`,
@@ -16,7 +22,13 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductPage({ params }) {
   const { handle } = await params;
-  const product = await getAdminProductByHandle(handle);
+  let product = null;
+  try {
+    product = await getAdminProductByHandle(handle);
+  } catch (error) {
+    const details = error instanceof Error ? error.message : String(error);
+    console.error("[products/page] Product fetch error:", details);
+  }
   if (!product) notFound();
 
   return (

@@ -4,10 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingBag, User, LogOut, X, Menu } from "lucide-react";
+import { Search, ShoppingBag, User, X, Menu } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 import { useAuth } from "@/components/auth/AuthContext";
-import AuthModal from "@/components/auth/AuthModal";
 import styles from "./Header.module.css";
 
 const defaultNavItems = [
@@ -41,10 +40,7 @@ export default function Header({ navItems = defaultNavItems }) {
 
   const [navOpen, setNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
 
-  const accountRef = useRef(null);
   const searchInputRef = useRef(null);
 
   function isActive(href) {
@@ -60,23 +56,17 @@ export default function Header({ navItems = defaultNavItems }) {
   }, [searchOpen]);
 
   useEffect(() => {
-    if (!searchOpen && !accountOpen && !navOpen) return;
+    if (!searchOpen && !navOpen) return;
     function onKey(e) {
       if (e.key !== "Escape") return;
       setSearchOpen(false);
-      setAccountOpen(false);
       setNavOpen(false);
     }
-    function onClickOutside(e) {
-      if (!accountRef.current?.contains(e.target)) setAccountOpen(false);
-    }
     document.addEventListener("keydown", onKey);
-    document.addEventListener("mousedown", onClickOutside);
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.removeEventListener("mousedown", onClickOutside);
     };
-  }, [searchOpen, accountOpen, navOpen]);
+  }, [searchOpen, navOpen]);
 
   useEffect(() => {
     document.body.style.overflow = navOpen ? "hidden" : "";
@@ -92,10 +82,6 @@ export default function Header({ navItems = defaultNavItems }) {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
-
-  const greeting = customer?.firstName
-    ? "Hi, " + customer.firstName
-    : (customer?.emailAddress?.emailAddress?.split("@")[0] ?? "Account");
 
   return (
     <>
@@ -131,7 +117,7 @@ export default function Header({ navItems = defaultNavItems }) {
                 className={styles.iconBtn}
                 type="button"
                 aria-label="Search"
-                onClick={() => { setSearchOpen((v) => !v); setAccountOpen(false); }}
+                onClick={() => { setSearchOpen((v) => !v); }}
               >
                 <Search size={18} strokeWidth={1.9} />
               </button>
@@ -141,30 +127,22 @@ export default function Header({ navItems = defaultNavItems }) {
                   className={styles.iconBtn}
                   type="button"
                   aria-label="Sign in"
-                  onClick={() => setAuthModalOpen(true)}
+                  onClick={() => {
+                    window.location.href = "/api/auth/shopify/login";
+                  }}
                 >
                   <User size={18} strokeWidth={1.9} />
                 </button>
               )}
 
               {!authLoading && customer && (
-                <div className={styles.accountWrap} ref={accountRef}>
-                  <button
-                    className={styles.iconBtn + " " + styles.iconBtnActive}
-                    type="button"
-                    aria-label="My account"
-                    onClick={() => setAccountOpen((v) => !v)}
-                  >
-                    <User size={18} strokeWidth={1.9} />
-                  </button>
-                  <div className={styles.dropdown} data-open={accountOpen ? "true" : "false"}>
-                    <span className={styles.dropGreeting}>{greeting}</span>
-                    <hr className={styles.dropDivider} />
-                    <a href="/api/auth/shopify/logout" className={styles.dropLink}>
-                      <LogOut size={13} /> Sign out
-                    </a>
-                  </div>
-                </div>
+                <Link
+                  className={styles.iconBtn + " " + styles.iconBtnActive}
+                  href="/profile"
+                  aria-label="Profile"
+                >
+                  <User size={18} strokeWidth={1.9} />
+                </Link>
               )}
 
               <Link className={styles.iconBtn + " " + styles.cartBtn} href="/cart" aria-label="Cart">
@@ -257,8 +235,6 @@ export default function Header({ navItems = defaultNavItems }) {
         aria-hidden="true" 
         onClick={() => setNavOpen(false)} 
       />
-
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </>
   );
 }

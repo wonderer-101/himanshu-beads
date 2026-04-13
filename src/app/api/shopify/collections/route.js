@@ -56,8 +56,14 @@ export async function GET(request) {
 
     return NextResponse.json({ ok: true, count: collections.length, collections });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : "Unknown error";
-    console.error("[collections] Full error:", msg);
-    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+    const details = error instanceof Error ? error.message : String(error);
+    console.error("[collections] Full error:", details);
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Categories are temporarily unavailable. Please try again shortly.",
+      },
+      { status: 503 }
+    );
   }
 }

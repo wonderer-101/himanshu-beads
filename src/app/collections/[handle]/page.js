@@ -66,16 +66,30 @@ export default async function CollectionPage({ params }) {
   const normalizedHandle = handle.toLowerCase();
   const specialCollection = SPECIAL_COLLECTIONS[normalizedHandle] || null;
 
+  let fetchFailed = false;
   const [productsResult, footerCollections] = await Promise.all([
-    specialCollection
-      ? getAdminProducts({
-          limit: 250,
-          query: specialCollection.query || undefined,
-        })
-      : getAdminProducts({
-          limit: 60,
-          collectionId: handle,
-        }),
+    (async () => {
+      try {
+        return specialCollection
+          ? await getAdminProducts({
+              limit: 250,
+              query: specialCollection.query || undefined,
+            })
+          : await getAdminProducts({
+              limit: 60,
+              collectionId: handle,
+            });
+      } catch (error) {
+        const details = error instanceof Error ? error.message : String(error);
+        console.error("[collections/page] Product fetch error:", details);
+        fetchFailed = true;
+        return {
+          missingCollection: false,
+          collection: null,
+          products: [],
+        };
+      }
+    })(),
     getFooterCollections(6),
   ]);
 
@@ -85,7 +99,9 @@ export default async function CollectionPage({ params }) {
     : allProducts;
 
   const collectionTitle = specialCollection?.title || productsResult.collection?.title || "Collection";
-  const emptyMessage = specialCollection?.emptyMessage || "No products found in this category.";
+  const emptyMessage = fetchFailed
+    ? "Products are temporarily unavailable. Please try again shortly."
+    : specialCollection?.emptyMessage || "No products found in this category.";
 
   return (
     <div className={styles.page}>

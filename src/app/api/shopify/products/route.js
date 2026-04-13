@@ -37,12 +37,14 @@ export async function GET(request) {
       products: result.products,
     });
   } catch (error) {
+    const details = error instanceof Error ? error.message : String(error);
+    console.error("[products] Full error:", details);
     return NextResponse.json(
       {
         ok: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: "Products are temporarily unavailable. Please try again shortly.",
       },
-      { status: 500 }
+      { status: 503 }
     );
   }
 }
