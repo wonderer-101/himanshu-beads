@@ -16,8 +16,9 @@ import {
   fetchCustomerProfile,
 } from "@/lib/shopify/customerAuth";
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const appUrl = new URL(request.url).origin;
     const cookieStore = await cookies();
     let accessToken = cookieStore.get(COOKIE_ACCESS_TOKEN)?.value;
     const refreshToken = cookieStore.get(COOKIE_REFRESH_TOKEN)?.value;
@@ -26,7 +27,7 @@ export async function GET() {
     // If no access token but we have a refresh token, refresh first.
     if (!accessToken && refreshToken) {
       try {
-        refreshed = await refreshAccessToken(refreshToken);
+        refreshed = await refreshAccessToken(refreshToken, appUrl);
         accessToken = refreshed.accessToken;
       } catch {
         return NextResponse.json({ customer: null }, { status: 200 });
@@ -38,15 +39,15 @@ export async function GET() {
     }
 
     // First attempt with existing token
-    let customer = await fetchCustomerProfile(accessToken);
+    let customer = await fetchCustomerProfile(accessToken, appUrl);
 
     // If token is stale, retry once after refresh
     if (!customer && refreshToken) {
       try {
         console.log("[shopify/me] access token returned null, attempting refresh...");
-        refreshed = await refreshAccessToken(refreshToken);
+        refreshed = await refreshAccessToken(refreshToken, appUrl);
         accessToken = refreshed.accessToken;
-        customer = await fetchCustomerProfile(accessToken);
+        customer = await fetchCustomerProfile(accessToken, appUrl);
       } catch (refreshErr) {
         console.error("[shopify/me] refresh failed:", refreshErr?.message);
         return NextResponse.json({ customer: null }, { status: 200 });

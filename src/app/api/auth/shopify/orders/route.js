@@ -39,15 +39,16 @@ const ORDER_QUERY = `{
   }
 }`;
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const appUrl = new URL(request.url).origin;
     const cookieStore = await cookies();
     let accessToken = cookieStore.get(COOKIE_ACCESS_TOKEN)?.value;
     const refreshToken = cookieStore.get(COOKIE_REFRESH_TOKEN)?.value;
 
     if (!accessToken && refreshToken) {
       try {
-        const refreshed = await refreshAccessToken(refreshToken);
+        const refreshed = await refreshAccessToken(refreshToken, appUrl);
         accessToken = refreshed.accessToken;
       } catch {
         return NextResponse.json({ orders: [] }, { status: 401 });
@@ -58,7 +59,7 @@ export async function GET() {
       return NextResponse.json({ orders: [] }, { status: 401 });
     }
 
-    const data = await queryCustomerApi(accessToken, ORDER_QUERY);
+    const data = await queryCustomerApi(accessToken, ORDER_QUERY, undefined, appUrl);
     const edges = data?.customer?.orders?.edges || [];
     const orders = edges.map(({ node }) => ({
       id: node.id,

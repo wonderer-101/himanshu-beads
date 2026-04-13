@@ -75,7 +75,7 @@ export async function buildAuthorizationUrl({ state, codeChallenge, redirectUri 
 
 // -- Token exchange -----------------------------------------------------
 
-export async function exchangeCodeForToken({ code, codeVerifier, redirectUri }) {
+export async function exchangeCodeForToken({ code, codeVerifier, redirectUri, origin }) {
   const config = await getOpenIDConfig();
   const clientId = process.env.SHOPIFY_CLIENT_ID;
 
@@ -87,9 +87,12 @@ export async function exchangeCodeForToken({ code, codeVerifier, redirectUri }) 
     code_verifier: codeVerifier,
   });
 
+  const headers = { "Content-Type": "application/x-www-form-urlencoded" };
+  if (origin) headers.Origin = origin;
+
   const res = await fetch(config.token_endpoint, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers,
     body: body.toString(),
   });
 
@@ -109,7 +112,7 @@ export async function exchangeCodeForToken({ code, codeVerifier, redirectUri }) 
 
 // -- Refresh token ------------------------------------------------------
 
-export async function refreshAccessToken(refreshToken) {
+export async function refreshAccessToken(refreshToken, origin) {
   const config = await getOpenIDConfig();
   const clientId = process.env.SHOPIFY_CLIENT_ID;
 
@@ -119,9 +122,12 @@ export async function refreshAccessToken(refreshToken) {
     refresh_token: refreshToken,
   });
 
+  const headers = { "Content-Type": "application/x-www-form-urlencoded" };
+  if (origin) headers.Origin = origin;
+
   const res = await fetch(config.token_endpoint, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers,
     body: body.toString(),
   });
 
@@ -143,12 +149,7 @@ function normalizeStoreDomain(storeDomain) {
   return storeDomain.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "");
 }
 
-export function getCustomerApiUrl() {
-  const storeDomain = normalizeStoreDomain(process.env.SHOPIFY_STORE_DOMAIN);
-  if (!storeDomain) {
-    throw new Error("SHOPIFY_STORE_DOMAIN is not set for Customer Account API.");
-  }
-
+function getLegacyCustomerApiUrl(storeDomain) {
   const apiVersion =
     (process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_VERSION ||
       process.env.SHOPIFY_STOREFRONT_API_VERSION ||
@@ -157,15 +158,50 @@ export function getCustomerApiUrl() {
   return `https://${storeDomain}/account/customer/api/${apiVersion}/graphql`;
 }
 
-export async function queryCustomerApi(accessToken, query, variables) {
-  const apiUrl = getCustomerApiUrl();
+let _customerApiUrlCache = null;
+
+export async function getCustomerApiUrl() {
+  const storeDomain = normalizeStoreDomain(process.env.SHOPIFY_STORE_DOMAIN);
+  if (!storeDomain) {
+    throw new Error("SHOPIFY_STORE_DOMAIN is not set for Customer Account API.");
+  }
+
+  if (_customerApiUrlCache) return _customerApiUrlCache;
+
+  const fallbackUrl = getLegacyCustomerApiUrl(storeDomain);
+
+  // Shopify exposes the canonical Customer Account API endpoint via .well-known.
+  // Use it when available to avoid version/path mismatches across stores.
+  try {
+    const discoveryUrl = `https://${storeDomain}/.well-known/customer-account-api`;
+    const discoveryRes = await fetch(discoveryUrl, { next: { revalidate: 3600 } });
+    if (discoveryRes.ok) {
+      const discovery = await discoveryRes.json();
+      const discoveredGraphqlUrl = discovery?.graphql_api;
+      if (typeof discoveredGraphqlUrl === "string" && discoveredGraphqlUrl.startsWith("https://")) {
+        _customerApiUrlCache = discoveredGraphqlUrl;
+        return _customerApiUrlCache;
+      }
+    }
+  } catch (err) {
+    console.warn("[shopify/customer-auth] customer-api discovery failed, falling back:", err?.message);
+  }
+
+  _customerApiUrlCache = fallbackUrl;
+  return _customerApiUrlCache;
+}
+
+export async function queryCustomerApi(accessToken, query, variables, origin) {
+  const apiUrl = await getCustomerApiUrl();
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: accessToken, // Raw shcat_* token, NOT "Bearer {token}"
+  };
+  if (origin) headers.Origin = origin;
 
   const res = await fetch(apiUrl, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: accessToken, // Raw shcat_* token, NOT "Bearer {token}"
-    },
+    headers,
     body: JSON.stringify({ query, variables }),
   });
 
@@ -190,7 +226,7 @@ export async function queryCustomerApi(accessToken, query, variables) {
 
 // -- Fetch customer profile via Customer Account API --------------------
 
-export async function fetchCustomerProfile(accessToken) {
+export async function fetchCustomerProfile(accessToken, origin) {
   const query = `{
     customer {
       id
@@ -201,7 +237,7 @@ export async function fetchCustomerProfile(accessToken) {
   }`;
 
   try {
-    const data = await queryCustomerApi(accessToken, query);
+    const data = await queryCustomerApi(accessToken, query, undefined, origin);
     return data?.customer ?? null;
   } catch (err) {
     console.error("[shopify/customer-profile]", err);

@@ -56,6 +56,7 @@ export async function GET(request) {
       code,
       codeVerifier,
       redirectUri,
+      origin: appUrl,
     });
 
     // Redirect to profile page after successful login
