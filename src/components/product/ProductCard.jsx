@@ -35,9 +35,7 @@ function StarRow({ reviewCount }) {
 function LoadingCard() {
   return (
     <article className={styles.card} aria-hidden="true">
-      <div className={`${styles.mediaWrap} ${styles.skeleton}`}>
-        <span className={styles.skeletonSale} />
-      </div>
+      <div className={`${styles.mediaWrap} ${styles.skeleton}`} />
       <div className={styles.skeletonMeta}>
         <span className={`${styles.skeleton} ${styles.skeletonLinePrimary}`} />
         <span className={`${styles.skeleton} ${styles.skeletonLineSecondary}`} />
@@ -51,7 +49,7 @@ export default function ProductCard({ product, index = 0, loading = false }) {
     return <LoadingCard />;
   }
 
-  const oldPrice = deriveOldPrice(product.price);
+  const oldPrice = deriveOldPrice(product.price, product.compareAtPrice);
   const reviewCount = deriveReviewCount(product.id);
   const hasImage = Boolean(product.image?.url);
   const toneClass = styles[getFallbackTone(index)];
@@ -61,7 +59,7 @@ export default function ProductCard({ product, index = 0, loading = false }) {
     <article className={styles.card}>
       <Link href={href} className={styles.cardLink} prefetch={false}>
         <div className={styles.mediaWrap}>
-          <span className={styles.saleBadge}>SALE</span>
+          {oldPrice ? <span className={styles.saleBadge}>SALE</span> : null}
           {hasImage ? (
             <img
               className={styles.mediaImage}

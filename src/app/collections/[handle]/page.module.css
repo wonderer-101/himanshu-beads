@@ -1,0 +1,475 @@
+.page {
+  min-height: 100vh;
+  background: #fff;
+  color: #231812;
+}
+
+.main {
+  background: #f8f3eb;
+  padding-bottom: 2.6rem;
+}
+
+.titleBar {
+  padding: 1.05rem clamp(1rem, 2vw, 1.5rem) 0.8rem;
+  text-align: center;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(1.55rem, 2.7vw, 2rem);
+  line-height: 1.08;
+  color: #21150f;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 255px minmax(0, 1fr);
+  gap: 1.05rem;
+  padding: 0.1rem clamp(1rem, 2vw, 1.5rem) 0;
+  border-top: 1px solid rgba(182, 165, 138, 0.87);
+}
+
+.filters {
+  background: transparent;
+  border-right: 1px solid rgba(182, 165, 138, 0.87);
+  padding: 0 0.85rem 0 0;
+  min-width: 0;
+}
+
+.filterHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0 0.65rem;
+  color: #2e221b;
+  border-bottom: 1px solid rgba(182, 165, 138, 0.87);
+}
+
+.filterHeader h2 {
+  margin: 0;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.79rem;
+  font-weight: 500;
+  color: #2f241e;
+}
+
+.filterGroup {
+  margin-top: 0.2rem;
+  padding-top: 0.8rem;
+  border-bottom: 1px solid rgba(182, 165, 138, 0.87);
+  padding-bottom: 0.72rem;
+}
+
+.filterGroup h3 {
+  margin: 0;
+  font-size: 0.79rem;
+  font-weight: 500;
+  color: #352820;
+}
+
+.filterGroup label {
+  margin-top: 0.48rem;
+  display: flex;
+  align-items: center;
+  gap: 0.46rem;
+  font-size: 0.75rem;
+  color: #3e2f28;
+  cursor: pointer;
+}
+
+.filterGroup input[type="checkbox"] {
+  width: 11px;
+  height: 11px;
+  margin: 0;
+  accent-color: #800000;
+}
+
+.priceTrack {
+  position: relative;
+  margin-top: 0.78rem;
+  height: 22px;
+  overflow: visible;
+}
+
+.trackBase {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  background: #2f241d;
+}
+
+.trackFill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  background: #2f241d;
+}
+
+.rangeInputs {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+}
+
+.rangeInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: none;
+  cursor: default;
+}
+
+.rangeInput:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.rangeInput::-webkit-slider-runnable-track {
+  height: 22px;
+  background: transparent;
+}
+
+.rangeInput::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #800000;
+  border: 1px solid #7b0000;
+  cursor: pointer;
+  margin-top: 5px;
+  pointer-events: auto;
+}
+
+.rangeInput::-moz-range-track {
+  height: 22px;
+  background: transparent;
+}
+
+.rangeInput::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #800000;
+  border: 1px solid #7b0000;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.rangeInputTop {
+  z-index: 5;
+}
+
+.priceInputs {
+  margin-top: 0.25rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.priceBox {
+  min-width: 0;
+}
+
+.priceBox small {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 0.68rem;
+  color: #4a3c32;
+}
+
+.priceBox input {
+  width: 100%;
+  display: block;
+  border: 1px solid #8e8274;
+  background: #fff;
+  padding: 0.18rem 0.35rem;
+  font-size: 0.65rem;
+  color: #2e221a;
+  outline: none;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.priceBox input:focus {
+  border-color: #800000;
+}
+
+.priceBox input::-webkit-outer-spin-button,
+.priceBox input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.productsWrap {
+  min-width: 0;
+  padding-right: clamp(0.2rem, 1.2vw, 0.85rem);
+}
+
+.productsMeta {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(182, 165, 138, 0.87);
+  margin-bottom: 0.52rem;
+}
+
+.productsMeta p {
+  margin: 0;
+  font-size: 0.73rem;
+  color: #2d221b;
+}
+
+.sortWrap {
+  position: relative;
+}
+
+.sortBy {
+  border: 1px solid #ddcebd;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.44rem;
+  border-radius: 999px;
+  font-size: 0.73rem;
+  color: #2d221b;
+  cursor: pointer;
+}
+
+.sortMenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.28rem);
+  z-index: 8;
+  min-width: 182px;
+  border: 1px solid #ddcebd;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(44, 22, 13, 0.14);
+  padding: 0.24rem;
+  display: grid;
+  gap: 0.12rem;
+}
+
+.sortOption {
+  border: 0;
+  background: transparent;
+  text-align: left;
+  border-radius: 8px;
+  padding: 0.34rem 0.46rem;
+  color: #2d221b;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.sortOption[data-active="true"] {
+  background: #f4ece1;
+  color: #8e0000;
+  font-weight: 700;
+}
+
+.sortOption:hover {
+  background: #f7f0e8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 194px);
+  justify-content: start;
+  gap: 0.8rem;
+}
+
+.card {
+  min-width: 0;
+}
+
+.cardLink {
+  display: block;
+}
+
+.mediaWrap {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8f2ea;
+  aspect-ratio: 0.84;
+}
+
+.mediaImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mediaFallback {
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.45), transparent 46%),
+    linear-gradient(145deg, #d8c59d 0%, #bda980 82%);
+}
+
+.saleBadge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background: #f0be54;
+  color: #fff;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 0.12rem 0.36rem 0.17rem;
+  border-radius: 0 0 6px 0;
+}
+
+.title {
+  margin-top: 0.3rem;
+  color: #171717;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 0.82rem;
+  line-height: 1.15;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ratingRow {
+  margin-top: 0.12rem;
+  display: flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.04rem;
+  color: #24a16d;
+}
+
+.stars :global(svg) {
+  width: 9px;
+  height: 9px;
+}
+
+.reviewCount {
+  color: #1c1c1c;
+  font-size: 0.66rem;
+  line-height: 1;
+  font-weight: 500;
+}
+
+.priceRow {
+  margin-top: 0.12rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.26rem;
+}
+
+.price {
+  color: #1d1611;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+.oldPrice {
+  color: #958a81;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.56rem;
+  font-weight: 600;
+  text-decoration: line-through;
+  line-height: 1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+.empty {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid #eadccc;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.8rem;
+  color: #6e5a4d;
+}
+
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .content {
+    grid-template-columns: 1fr;
+    padding-inline: 0.9rem;
+    border-top: none;
+  }
+
+  .filters {
+    display: none;
+  }
+
+  .productsMeta {
+    border-top: 1px solid rgba(182, 165, 138, 0.87);
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .main {
+    padding-bottom: 1.6rem;
+  }
+
+  .content {
+    padding-top: 0;
+  }
+
+  .titleBar {
+    padding: 0.8rem 0.9rem 0.55rem;
+  }
+
+  .heading {
+    font-size: 1.45rem;
+  }
+
+  .productsMeta p,
+  .sortBy {
+    font-size: 0.69rem;
+  }
+
+  .grid {
+    gap: 0.6rem;
+  }
+}

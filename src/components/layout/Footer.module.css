@@ -6,7 +6,7 @@
 .site-footer {
   background: #333333;
   color: #ffe9d5;
-  margin-top: 1.6rem;
+  margin-top: 0;
   padding-top: 2rem;
 }
 
@@ -65,10 +65,6 @@
 }
 
 @media (max-width: 700px) {
-  .site-footer {
-    margin-top: 1.6rem;
-  }
-
   .site-footer .shell {
     padding-inline: 0.9rem;
   }

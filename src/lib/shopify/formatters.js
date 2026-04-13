@@ -15,19 +15,26 @@ export function formatProductPrice(price) {
   }).format(amount);
 }
 
-export function deriveOldPrice(price) {
-  if (!price?.amount || !price?.currencyCode) {
+export function deriveOldPrice(price, compareAtPrice) {
+  if (!price?.amount || !price?.currencyCode || !compareAtPrice?.amount) {
     return null;
   }
 
-  const amount = Number.parseFloat(price.amount);
-  if (Number.isNaN(amount) || amount <= 0) {
+  const currentAmount = Number.parseFloat(price.amount);
+  const compareAmount = Number.parseFloat(compareAtPrice.amount);
+
+  if (
+    Number.isNaN(currentAmount) ||
+    Number.isNaN(compareAmount) ||
+    currentAmount <= 0 ||
+    compareAmount <= currentAmount
+  ) {
     return null;
   }
 
   return {
-    amount: (amount * 1.25).toFixed(2),
-    currencyCode: price.currencyCode,
+    amount: compareAmount.toFixed(2),
+    currencyCode: compareAtPrice.currencyCode || price.currencyCode,
   };
 }
 

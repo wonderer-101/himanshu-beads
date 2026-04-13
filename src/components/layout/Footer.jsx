@@ -2,9 +2,9 @@ import Link from "next/link";
 import styles from "./Footer.module.css";
 
 const fallbackCollections = [
-  { id: "fallback-new-arrivals", title: "New Arrivals" },
-  { id: "fallback-rings", title: "Rings" },
-  { id: "fallback-necklaces", title: "Necklaces" },
+  { id: "fallback-new-arrivals", title: "New Arrivals", handle: "new-arrivals" },
+  { id: "fallback-rings", title: "Rings", handle: "rings" },
+  { id: "fallback-necklaces", title: "Necklaces", handle: "necklaces" },
 ];
 
 function cx(...classNames) {
@@ -23,35 +23,38 @@ export default function Footer({ collections = [] }) {
         <section>
           <h3>Help Center</h3>
           <a href="/#faqs">FAQ</a>
-          <a href="#">Contact Us</a>
-          <a href="#">Return Policy</a>
-          <a href="#">Shipping & Delivery</a>
-          <a href="#">Terms & Conditions</a>
-          <a href="#">Initiate Return & Exchange</a>
-          <a href="#">Privacy Policy</a>
+          <a href="#footer-contact">Contact Us</a>
+          <a href="/#faqs">Return Policy</a>
+          <a href="/#faqs">Shipping & Delivery</a>
+          <a href="/#faqs">Terms & Conditions</a>
+          <a href="mailto:info@himanshubeads.in">Order Support</a>
+          <a href="/about">Privacy Policy</a>
         </section>
 
         <section>
           <h3>Quick Links</h3>
           <a href="/">Home</a>
           <Link href="/about">About Us</Link>
-          <a href="/#categories">Shop by Category</a>
-          <a href="/#collections">Featured Products</a>
-          <a href="/#popular-products">Popular Products</a>
+          <Link href="/collections">Shop by Category</Link>
+          <Link href="/collections/featured">Featured Products</Link>
+          <Link href="/collections/popular">Popular Products</Link>
           <Link href="/cart">Cart</Link>
-          <a href="/#faqs">Return & Exchange</a>
+          <Link href="/profile">My Account</Link>
         </section>
 
         <section>
           <h3>Collections</h3>
           {visibleCollections.map((collection) => (
-            <a key={collection.id} href="/#collections">
+            <a
+              key={collection.id}
+              href={collection.handle ? `/collections/${encodeURIComponent(collection.handle)}` : "/#collections"}
+            >
               {collection.title}
             </a>
           ))}
         </section>
 
-        <section>
+        <section id="footer-contact">
           <h3>Contact Us</h3>
           <p>
             <strong>Email</strong>

@@ -1,0 +1,189 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-inline: clamp(0.9rem, 2vw, 1.5rem);
+}
+
+/* ---- Shared heading ---- */
+.sectionHeading {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+  color: #231812;
+  line-height: 1.1;
+}
+
+/* ---- Testimonials ---- */
+.reviewsTrack {
+  --review-card-width: 240px;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+}
+.reviewsTrack::-webkit-scrollbar { display: none; }
+.reviewCard {
+  flex: 0 0 var(--review-card-width);
+  scroll-snap-align: start;
+  border: 1px solid #ead9c9;
+  border-radius: 16px;
+  background: #fff;
+  padding: 1rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  box-shadow: 0 2px 12px rgba(91,37,15,.07);
+}
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid #f1e0cf;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.stars { display: flex; gap: 2px; color: #1aa36f; }
+.reviewText {
+  margin: 0;
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: #4f4038;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.reviewName { margin: 0; font-size: 0.74rem; font-weight: 700; color: #800000; }
+.reviewName span { color: #79665a; font-weight: 500; }
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 12px;
+}
+.dot {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  height: 3px;
+  width: 18px;
+  border-radius: 999px;
+  background: #dfd0c4;
+  transition: width 220ms, background 220ms;
+}
+.dot[data-active="true"] { width: 30px; background: #800000; }
+
+/* ---- FAQ ---- */
+.faqList { display: flex; flex-direction: column; gap: 8px; }
+.faqItem {
+  background: #fff;
+  border: 1px solid #eadccc;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 150ms;
+}
+.faqItem[data-open="true"] { border-color: #c9b09a; }
+.faqQuestion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #231812;
+  cursor: pointer;
+}
+.faqIcon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #ccb8a8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #800000;
+}
+.faqAnswer {
+  margin: 0;
+  padding: 0 1rem 0.9rem;
+  font-size: 0.88rem;
+  color: #4f4038;
+  line-height: 1.6;
+}
+.faqAnswer a { color: #800000; text-decoration: underline; }
+
+/* ---- Trust cards ---- */
+.trustGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.trustCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 1.1rem 0.7rem 1rem;
+  background: #fff;
+  border: 1px solid #e7d8c8;
+  border-radius: 16px;
+  text-align: center;
+  transition: box-shadow 200ms, transform 200ms;
+}
+.trustCard:hover { box-shadow: 0 6px 20px rgba(128,0,0,.1); transform: translateY(-2px); }
+.trustIcon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff8f2;
+  border-radius: 50%;
+  border: 1px solid #f0e0d0;
+}
+.trustIcon img { width: 28px; height: 28px; object-fit: contain; }
+.trustLabel { margin: 0; font-size: 0.8rem; font-weight: 600; color: #231812; line-height: 1.4; }
+
+/* ---- Responsive ---- */
+@media (min-width: 900px) {
+  .reviewsTrack {
+    --review-card-width: 280px;
+  }
+  .dots { display: none; }
+}
+@media (max-width: 900px) {
+  .trustGrid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 767px) {
+  .section { gap: 1.6rem; padding-inline: 0.9rem; }
+  .reviewsTrack {
+    --review-card-width: min(82vw, 300px);
+    scroll-padding-inline: calc((100% - var(--review-card-width)) / 2);
+    padding-inline: calc((100% - var(--review-card-width)) / 2);
+  }
+  .reviewCard {
+    scroll-snap-align: center;
+  }
+  .faqQuestion { font-size: 0.84rem; padding: 0.75rem 0.85rem; }
+  .faqAnswer { padding: 0 0.85rem 0.8rem; font-size: 0.84rem; }
+  .trustGrid { gap: 10px; }
+  .trustCard { padding: 0.85rem 0.6rem; border-radius: 14px; }
+  .trustLabel { font-size: 0.75rem; }
+  .trustIcon { width: 42px; height: 42px; }
+  .trustIcon img { width: 24px; height: 24px; }
+}

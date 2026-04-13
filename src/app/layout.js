@@ -1,6 +1,7 @@
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/cart/CartProvider";
+import { AuthProvider } from "@/components/auth/AuthContext";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -24,7 +25,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${manrope.variable}`}>
       <body>
-        <CartProvider>{children}</CartProvider>
+        <AuthProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

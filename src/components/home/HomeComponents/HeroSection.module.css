@@ -1,0 +1,200 @@
+/* HeroSection.module.css */
+
+/* =====================================================
+   DESKTOP -- 2-row grid
+   ===================================================== */
+.hero {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 2fr 1fr;
+  grid-template-areas:
+    "left left left right right right"
+    "m1 m1 m2 m2 m3 m3";
+  height: calc(100vh - 108px);
+  max-height: 820px;
+  min-height: 400px;
+}
+
+/* display:contents makes .track invisible to grid --
+   tiles become direct grid children so grid-area works */
+.track {
+  display: contents;
+}
+
+.tile {
+  position: relative;
+  overflow: hidden;
+}
+
+.tileLeft {
+  grid-area: left;
+  background:
+    linear-gradient(115deg, rgba(59,10,8,.38) 0%, rgba(41,6,6,.2) 60%),
+    linear-gradient(130deg, #73050c 0%, #95070e 52%, #62040a 100%);
+}
+.tileLeft::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 35%, rgba(232,166,118,.35) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.tileRight {
+  grid-area: right;
+  background:
+    linear-gradient(105deg, rgba(50,8,16,.3) 0%, rgba(63,8,8,.55) 100%),
+    radial-gradient(circle at 18% 22%, rgba(246,199,132,.9) 0%, transparent 35%),
+    linear-gradient(135deg, #8c1015 0%, #7f0e15 40%, #611019 100%);
+}
+
+.tileMini1 { grid-area: m1; background: linear-gradient(145deg, #8f1118 0%, #640912 100%); }
+.tileMini2 { grid-area: m2; background: linear-gradient(145deg, #5a1215 0%, #271013 100%); }
+.tileMini3 { grid-area: m3; background: linear-gradient(150deg, #7d0f19 0%, #4a0810 100%); }
+
+.overlay {
+  position: absolute;
+  left: 1.6rem;
+  right: 1.6rem;
+  bottom: 1.4rem;
+  z-index: 2;
+}
+
+.h1 {
+  margin: 0;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(2rem, 3.8vw, 3.2rem);
+  color: #f7e0c7;
+  line-height: 1.05;
+}
+
+.h2 {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
+  color: #f8e4cc;
+  line-height: 1.05;
+}
+
+.shopBtn {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255,225,196,.8);
+  border-radius: 999px;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #f8dfc5;
+  background: rgba(78,8,10,.55);
+  text-decoration: none;
+  transition: background 160ms;
+}
+.shopBtn:hover { background: rgba(78,8,10,.78); }
+
+.miniLabel {
+  position: absolute;
+  left: 0.9rem;
+  bottom: 0.75rem;
+  color: #fbe9d6;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* Dots hidden on desktop */
+.dots { display: none; }
+
+.dot {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  height: 3px;
+  width: 20px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.38);
+  transition: width 240ms ease, background 240ms ease;
+}
+.dot[data-active="true"] {
+  width: 36px;
+  background: #fff;
+}
+
+/* =====================================================
+   MOBILE/TABLET (<=1080px) -- full-bleed carousel
+   ===================================================== */
+@media (max-width: 1080px) {
+  /* Reset ALL desktop sizing -- critical */
+  .hero {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  /* Track = the sliding strip */
+  .track {
+    display: block;
+    position: relative;
+    height: 56vw;
+    min-height: 180px;
+    max-height: 280px;
+  }
+
+  /* One active slide at a time (reference carousel behavior) */
+  .tile {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 280ms ease;
+  }
+
+  .tile[data-active="true"] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .overlay {
+    left: 1rem;
+    right: 1rem;
+    bottom: 0.9rem;
+  }
+
+  .h1 { font-size: clamp(1.75rem, 8.5vw, 2.4rem); }
+  .h2 { font-size: clamp(1.6rem, 7.8vw, 2.2rem); margin-bottom: 0.6rem; }
+  .miniLabel { font-size: 0.8rem; }
+
+  /* Show indicators on mobile */
+  .dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .dot {
+    pointer-events: auto;
+    background: rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .dot[data-active="true"] {
+    background: #fff;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  }
+}

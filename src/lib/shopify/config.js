@@ -1,58 +1,49 @@
-const DEFAULT_ADMIN_API_VERSION = "2026-01";
-const DEFAULT_STOREFRONT_API_VERSION = "2026-01";
+const DEFAULT_STOREFRONT_API_VERSION = "2026-04";
 
 function normalizeStoreDomain(storeDomain) {
   if (!storeDomain) return "";
-
-  return storeDomain
-    .trim()
-    .replace(/^https?:\/\//, "")
-    .replace(/\/+$/, "");
+  return storeDomain.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "");
 }
 
 function requiredEnv(name) {
   const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
-  }
+  if (!value) throw new Error(`Missing required environment variable: ${name}`);
   return value;
 }
 
 function optionalEnv(name) {
-  const value = process.env[name];
-  return value ? value.trim() : "";
+  return (process.env[name] ?? "").trim();
+}
+
+// Private tokens use Shopify-Storefront-Private-Token header
+// Public tokens use X-Shopify-Storefront-Access-Token header
+function isPrivateToken(token) {
+  return token.startsWith("shpss_") || token.startsWith("shpat_");
 }
 
 export function getShopifyConfig() {
-  const sharedAccessToken = optionalEnv("SHOPIFY_ACCESS_TOKEN");
-  const adminAccessToken =
-    optionalEnv("SHOPIFY_ADMIN_ACCESS_TOKEN") || sharedAccessToken;
+  const privateToken = optionalEnv("SHOPIFY_STOREFRONT_PRIVATE_TOKEN");
+  const publicToken = optionalEnv("SHOPIFY_STOREFRONT_ACCESS_TOKEN");
 
-  const storefrontPrivateToken = optionalEnv("SHOPIFY_STOREFRONT_PRIVATE_TOKEN");
-  const storefrontPublicToken =
-    optionalEnv("SHOPIFY_STOREFRONT_ACCESS_TOKEN") || sharedAccessToken;
-  const storefrontAccessToken = storefrontPrivateToken || storefrontPublicToken;
-  const storefrontTokenHeader = storefrontPrivateToken
-    ? "Shopify-Storefront-Private-Token"
-    : "X-Shopify-Storefront-Access-Token";
+  // Pick the best available token
+  const storefrontAccessToken = privateToken || publicToken;
 
-  if (!adminAccessToken && !storefrontAccessToken) {
+  if (!storefrontAccessToken) {
     throw new Error(
-      "Missing Shopify access token. Set SHOPIFY_ACCESS_TOKEN or specific Admin/Storefront token env variables."
+      "Missing Shopify Storefront token. Set SHOPIFY_STOREFRONT_PRIVATE_TOKEN in .env.local. " +
+      "Get it from: Shopify Admin -> Sales channels -> Headless -> Storefront API."
     );
   }
 
+  const storefrontTokenHeader = isPrivateToken(storefrontAccessToken)
+    ? "Shopify-Storefront-Private-Token"
+    : "X-Shopify-Storefront-Access-Token";
+
   return {
     storeDomain: normalizeStoreDomain(requiredEnv("SHOPIFY_STORE_DOMAIN")),
-    adminAccessToken,
     storefrontAccessToken,
     storefrontTokenHeader,
-    hasAdminAccessToken: Boolean(adminAccessToken),
-    hasStorefrontAccessToken: Boolean(storefrontAccessToken),
-    adminApiVersion:
-      process.env.SHOPIFY_ADMIN_API_VERSION || DEFAULT_ADMIN_API_VERSION,
     storefrontApiVersion:
-      process.env.SHOPIFY_STOREFRONT_API_VERSION ||
-      DEFAULT_STOREFRONT_API_VERSION,
+      optionalEnv("SHOPIFY_STOREFRONT_API_VERSION") || DEFAULT_STOREFRONT_API_VERSION,
   };
 }

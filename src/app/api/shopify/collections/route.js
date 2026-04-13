@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { shopifyAdminGraphQL } from "@/lib/shopify/admin";
+import { shopifyStorefrontGraphQL } from "@/lib/shopify/storefront";
 
 const COLLECTIONS_QUERY = `
-  query AdminCollections($first: Int!) {
+  query StorefrontCollections($first: Int!) {
     collections(first: $first, sortKey: UPDATED_AT, reverse: true) {
       edges {
         node {
@@ -33,7 +33,7 @@ export async function GET(request) {
     const url = new URL(request.url);
     const limit = parseLimit(url.searchParams.get("limit"));
 
-    const data = await shopifyAdminGraphQL({
+    const data = await shopifyStorefrontGraphQL({
       query: COLLECTIONS_QUERY,
       variables: { first: limit },
     });
@@ -54,18 +54,10 @@ export async function GET(request) {
           : null,
       })) || [];
 
-    return NextResponse.json({
-      ok: true,
-      count: collections.length,
-      collections,
-    });
+    return NextResponse.json({ ok: true, count: collections.length, collections });
   } catch (error) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
-    );
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    console.error("[collections] Full error:", msg);
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
   }
 }

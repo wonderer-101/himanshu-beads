@@ -180,11 +180,15 @@
 
 .itemPrice {
   margin: 0;
-  color: #34271d;
-  font-family: var(--font-cormorant), Georgia, serif;
-  font-size: 1.45rem;
-  line-height: 1;
-  font-weight: 700;
+  color: #241912;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.012em;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  white-space: nowrap;
 }
 
 .itemActions {
@@ -280,9 +284,14 @@
 
 .summaryRow strong {
   color: #1e1611;
-  font-family: var(--font-cormorant), Georgia, serif;
-  font-size: 1.3rem;
-  line-height: 1;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 1.12rem;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  white-space: nowrap;
 }
 
 .summaryRowTotal {
@@ -292,7 +301,7 @@
 }
 
 .summaryRowTotal strong {
-  font-size: 1.64rem;
+  font-size: 1.34rem;
 }
 
 .summaryHint {
@@ -440,7 +449,7 @@
   }
 
   .itemPrice {
-    font-size: 1.24rem;
+    font-size: 1.06rem;
   }
 
   .qtyControl {

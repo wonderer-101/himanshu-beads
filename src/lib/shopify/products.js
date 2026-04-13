@@ -1,4 +1,4 @@
-import { shopifyAdminGraphQL } from "./admin";
+import { shopifyStorefrontGraphQL } from "./storefront";
 import { getShopifyConfig } from "./config";
 
 const IMAGE_NODE_FIELDS = `
@@ -12,10 +12,17 @@ const PRODUCT_LIST_NODE_FIELDS = `
   id
   title
   handle
+  availableForSale
   featuredImage {
     ${IMAGE_NODE_FIELDS}
   }
-  priceRangeV2 {
+  priceRange {
+    minVariantPrice {
+      amount
+      currencyCode
+    }
+  }
+  compareAtPriceRange {
     minVariantPrice {
       amount
       currencyCode
@@ -45,7 +52,7 @@ const PRODUCT_DETAIL_NODE_FIELDS = `
 `;
 
 const PRODUCTS_QUERY = `
-  query AdminProducts($first: Int!, $query: String) {
+  query StorefrontProducts($first: Int!, $query: String) {
     products(first: $first, query: $query, sortKey: UPDATED_AT, reverse: true) {
       edges {
         node {
@@ -57,8 +64,8 @@ const PRODUCTS_QUERY = `
 `;
 
 const COLLECTION_PRODUCTS_QUERY = `
-  query AdminCollectionProducts($collectionId: ID!, $first: Int!) {
-    collection(id: $collectionId) {
+  query StorefrontCollectionProducts($handle: String!, $first: Int!) {
+    collection(handle: $handle) {
       id
       title
       handle
@@ -74,22 +81,15 @@ const COLLECTION_PRODUCTS_QUERY = `
 `;
 
 const PRODUCT_BY_HANDLE_QUERY = `
-  query AdminProductByHandle($query: String!) {
-    products(first: 1, query: $query) {
-      edges {
-        node {
-          ${PRODUCT_DETAIL_NODE_FIELDS}
-        }
-      }
+  query StorefrontProductByHandle($handle: String!) {
+    product(handle: $handle) {
+      ${PRODUCT_DETAIL_NODE_FIELDS}
     }
   }
 `;
 
 function mapImage(image, fallbackAlt) {
-  if (!image?.url) {
-    return null;
-  }
-
+  if (!image?.url) return null;
   return {
     url: image.url,
     alt: image.altText || fallbackAlt || "Product image",
@@ -103,16 +103,15 @@ function mapProductSummary(node) {
     id: node.id,
     title: node.title,
     handle: node.handle,
+    availableForSale: node.availableForSale ?? true,
     image: mapImage(node.featuredImage, node.title),
-    price: node.priceRangeV2?.minVariantPrice || null,
+    price: node.priceRange?.minVariantPrice || null,
+    compareAtPrice: node.compareAtPriceRange?.minVariantPrice || null,
   };
 }
 
 function normalizeVariantId(variantGid) {
-  if (!variantGid) {
-    return "";
-  }
-
+  if (!variantGid) return "";
   const lastPart = variantGid.split("/").pop();
   return /^\d+$/.test(lastPart || "") ? lastPart : "";
 }
@@ -122,15 +121,11 @@ function mapProductDetail(node) {
   const imageMap = new Map();
 
   const featuredImage = mapImage(node.featuredImage, node.title);
-  if (featuredImage?.url) {
-    imageMap.set(featuredImage.url, featuredImage);
-  }
+  if (featuredImage?.url) imageMap.set(featuredImage.url, featuredImage);
 
   node.images?.edges?.forEach(({ node: imageNode }) => {
     const image = mapImage(imageNode, node.title);
-    if (image?.url) {
-      imageMap.set(image.url, image);
-    }
+    if (image?.url) imageMap.set(image.url, image);
   });
 
   const images = Array.from(imageMap.values());
@@ -151,11 +146,20 @@ function mapProductDetail(node) {
 }
 
 export async function getAdminProducts({ limit, query = "", collectionId = "" }) {
-  const data = await shopifyAdminGraphQL(
-    collectionId
+  // collectionId in Storefront API is a handle (string) not a GID
+  // Support both GID format (legacy) and plain handle
+  let collectionHandle = collectionId;
+  if (collectionHandle && collectionHandle.includes("/")) {
+    // Extract handle from GID like gid://shopify/Collection/123 - not possible, need handle
+    // If a GID is passed, fallback to regular product query with filter
+    collectionHandle = "";
+  }
+
+  const data = await shopifyStorefrontGraphQL(
+    collectionHandle
       ? {
           query: COLLECTION_PRODUCTS_QUERY,
-          variables: { first: limit, collectionId },
+          variables: { first: limit, handle: collectionHandle },
         }
       : {
           query: PRODUCTS_QUERY,
@@ -163,7 +167,7 @@ export async function getAdminProducts({ limit, query = "", collectionId = "" })
         }
   );
 
-  if (collectionId && !data.collection) {
+  if (collectionHandle && !data.collection) {
     return {
       missingCollection: true,
       collection: null,
@@ -171,13 +175,13 @@ export async function getAdminProducts({ limit, query = "", collectionId = "" })
     };
   }
 
-  const productEdges = collectionId
+  const productEdges = collectionHandle
     ? data.collection?.products?.edges || []
     : data.products?.edges || [];
 
   return {
     missingCollection: false,
-    collection: collectionId
+    collection: collectionHandle
       ? {
           id: data.collection.id,
           title: data.collection.title,
@@ -190,22 +194,15 @@ export async function getAdminProducts({ limit, query = "", collectionId = "" })
 
 export async function getAdminProductByHandle(handle) {
   const normalizedHandle = handle?.trim().toLowerCase();
-  if (!normalizedHandle) {
-    return null;
-  }
+  if (!normalizedHandle) return null;
 
-  const data = await shopifyAdminGraphQL({
+  const data = await shopifyStorefrontGraphQL({
     query: PRODUCT_BY_HANDLE_QUERY,
-    variables: { query: `handle:${normalizedHandle}` },
+    variables: { handle: normalizedHandle },
   });
 
-  const nodes = data.products?.edges?.map(({ node }) => node) || [];
-  const matchedNode =
-    nodes.find((node) => node.handle?.toLowerCase() === normalizedHandle) || nodes[0] || null;
+  const node = data.product;
+  if (!node) return null;
 
-  if (!matchedNode) {
-    return null;
-  }
-
-  return mapProductDetail(matchedNode);
+  return mapProductDetail(node);
 }

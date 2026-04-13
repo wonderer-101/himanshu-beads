@@ -95,6 +95,9 @@
 
 .detailsColumn {
   padding: 1.35rem 1.2rem;
+  background:
+    radial-gradient(circle at 100% -5%, rgba(240, 195, 130, 0.2) 0%, transparent 36%),
+    #fff;
 }
 
 .saleBadge {
@@ -118,6 +121,10 @@
   font-size: clamp(2.05rem, 3.2vw, 2.85rem);
   line-height: 0.98;
   font-weight: 700;
+}
+
+.titleNoBadge {
+  margin-top: 0.15rem;
 }
 
 .ratingRow {
@@ -144,18 +151,26 @@
 }
 
 .price {
-  color: #15120f;
-  font-family: var(--font-cormorant), Georgia, serif;
-  font-size: clamp(2rem, 3vw, 2.6rem);
-  line-height: 1;
-  font-weight: 700;
+  color: #1b1410;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: clamp(1.72rem, 2.5vw, 2.2rem);
+  line-height: 1.04;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
 .comparePrice {
-  color: #8f8780;
-  font-family: var(--font-cormorant), Georgia, serif;
-  font-size: 1.5rem;
+  color: #958a81;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: clamp(1rem, 1.45vw, 1.22rem);
+  font-weight: 600;
   text-decoration: line-through;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
 .shippingNote {
@@ -165,32 +180,54 @@
   font-size: 0.92rem;
 }
 
-.quantityWrap {
+.purchasePanel {
   margin-top: 1rem;
+  border: 1px solid #e8dacb;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fffdfb 0%, #fff7ef 100%);
+  padding: 0.82rem 0.84rem;
+}
+
+.quantityWrap {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
 }
 
 .quantityWrap label {
   color: #2a211b;
   font-family: var(--font-manrope), "Segoe UI", sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.83rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .quantityControl {
-  margin-top: 0.4rem;
+  margin-top: 0;
   width: fit-content;
   display: grid;
   grid-template-columns: 40px 56px 40px;
   border: 1px solid #d8cabb;
-  border-radius: 10px;
+  border-radius: 999px;
   overflow: hidden;
+  background: #fff;
 }
 
-.quantityControl button {
+.qtyBtn {
   border: 0;
   background: #f8f3ec;
   color: #2d241e;
-  font-size: 1.15rem;
   cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background-color 150ms ease;
+}
+
+.qtyBtn:hover {
+  background: #efe4d7;
 }
 
 .quantityControl input {
@@ -198,10 +235,47 @@
   border-inline: 1px solid #e5d8cb;
   text-align: center;
   font-family: var(--font-manrope), "Segoe UI", sans-serif;
-  font-size: 0.98rem;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #251d16;
   width: 100%;
   outline: none;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.quantityControl input::-webkit-outer-spin-button,
+.quantityControl input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.linePreview {
+  margin-top: 0.62rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid #ecdfd1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.linePreview span {
+  color: #695d53;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.linePreview strong {
+  color: #2f2018;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 1.12rem;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.012em;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
 .actions {
@@ -217,6 +291,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.45rem;
   border-radius: 999px;
   text-align: center;
   font-family: var(--font-manrope), "Segoe UI", sans-serif;
@@ -228,27 +303,31 @@
 .primaryAction {
   background: #8e0000;
   color: #fff;
+  box-shadow: 0 8px 20px rgba(142, 0, 0, 0.24);
+  transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.primaryAction:hover {
+  background: #720000;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(142, 0, 0, 0.28);
 }
 
 .secondaryAction {
   border: 1px solid #8e0000;
   color: #8e0000;
   background: #fff;
+  transition: background-color 150ms ease;
+}
+
+.secondaryAction:hover {
+  background: #fff6ef;
 }
 
 .primaryAction:disabled {
   cursor: not-allowed;
   background: #cfbbb5;
-}
-
-.quickCheckout {
-  margin-top: 0.58rem;
-  display: inline-flex;
-  color: #7a2016;
-  font-family: var(--font-manrope), "Segoe UI", sans-serif;
-  font-size: 0.84rem;
-  font-weight: 700;
-  text-decoration: underline;
+  box-shadow: none;
 }
 
 .actionHint {
@@ -288,24 +367,6 @@
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-}
-
-.tags {
-  margin-top: 0.95rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.48rem;
-}
-
-.tags span {
-  border: 1px solid #dfd2c5;
-  border-radius: 999px;
-  background: #fff;
-  color: #5b4f45;
-  font-family: var(--font-manrope), "Segoe UI", sans-serif;
-  font-size: 0.78rem;
-  line-height: 1;
-  padding: 0.34rem 0.65rem;
 }
 
 .descriptionCard {
@@ -372,6 +433,10 @@
 
   .detailsColumn {
     padding: 1rem 0.9rem;
+  }
+
+  .purchasePanel {
+    padding: 0.72rem 0.72rem;
   }
 
   .trustGrid {

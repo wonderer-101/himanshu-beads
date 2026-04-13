@@ -4,8 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Gem,
-  RefreshCcw,
+  Headset,
+  Minus,
+  Plus,
   ShieldCheck,
+  ShoppingBag,
   Star,
   Truck,
 } from "lucide-react";
@@ -27,8 +30,8 @@ const trustItems = [
     title: "Express Shipping",
   },
   {
-    icon: RefreshCcw,
-    title: "Easy Exchange",
+    icon: Headset,
+    title: "Premium Support",
   },
   {
     icon: Gem,
@@ -52,21 +55,17 @@ export default function ProductDetailView({ product }) {
   const [addedState, setAddedState] = useState("idle");
 
   const selectedImage = images[selectedIndex] || images[0] || null;
-  const oldPrice = deriveOldPrice(product.price);
+  const oldPrice = deriveOldPrice(product.price, product.compareAtPrice);
   const reviewCount = deriveReviewCount(product.id);
+  const unitPrice = Number.parseFloat(product.price?.amount || "0") || 0;
+  const linePrice = unitPrice * quantity;
 
-  const addToCartHref = useMemo(() => {
-    if (!product.variantNumericId || !product.storeDomain) {
-      return product.storefrontUrl;
-    }
-    return `https://${product.storeDomain}/cart/${product.variantNumericId}:${quantity}`;
-  }, [product.storeDomain, product.storefrontUrl, product.variantNumericId, quantity]);
-
-  const hasTags = Boolean(product.tags?.length);
   const canAddToCart = Boolean(product.variantNumericId && product.storeDomain);
-  const buyNowHref = canAddToCart
-    ? `${addToCartHref}${addToCartHref.includes("?") ? "&" : "?"}checkout`
-    : product.storefrontUrl;
+  const quantityLabel = useMemo(() => `${quantity} ${quantity === 1 ? "item" : "items"}`, [quantity]);
+  const linePriceLabel = useMemo(() => formatProductPrice({
+    amount: linePrice.toFixed(2),
+    currencyCode: product.price?.currencyCode || "INR",
+  }), [linePrice, product.price?.currencyCode]);
 
   useEffect(() => {
     if (addedState !== "added") {
@@ -135,8 +134,8 @@ export default function ProductDetailView({ product }) {
           </div>
 
           <aside className={styles.detailsColumn}>
-            <span className={styles.saleBadge}>Sale</span>
-            <h1 className={styles.title}>{product.title}</h1>
+            {oldPrice ? <span className={styles.saleBadge}>Sale</span> : null}
+            <h1 className={`${styles.title} ${oldPrice ? "" : styles.titleNoBadge}`}>{product.title}</h1>
 
             <div className={styles.ratingRow}>
               <div className={styles.stars} aria-label="Rated 5 out of 5">
@@ -156,31 +155,40 @@ export default function ProductDetailView({ product }) {
 
             <p className={styles.shippingNote}>Tax included. Shipping calculated at checkout.</p>
 
-            <div className={styles.quantityWrap}>
-              <label htmlFor="product-quantity">Quantity</label>
-              <div className={styles.quantityControl}>
-                <button
-                  type="button"
-                  onClick={() => setQuantity((current) => Math.max(current - 1, 1))}
-                  aria-label="Decrease quantity"
-                >
-                  -
-                </button>
-                <input
-                  id="product-quantity"
-                  type="number"
-                  min={1}
-                  max={10}
-                  value={quantity}
-                  onChange={(event) => setQuantity(safeQuantity(event.target.value))}
-                />
-                <button
-                  type="button"
-                  onClick={() => setQuantity((current) => Math.min(current + 1, 10))}
-                  aria-label="Increase quantity"
-                >
-                  +
-                </button>
+            <div className={styles.purchasePanel}>
+              <div className={styles.quantityWrap}>
+                <label htmlFor="product-quantity">Quantity</label>
+                <div className={styles.quantityControl}>
+                  <button
+                    type="button"
+                    className={styles.qtyBtn}
+                    onClick={() => setQuantity((current) => Math.max(current - 1, 1))}
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus size={15} />
+                  </button>
+                  <input
+                    id="product-quantity"
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={quantity}
+                    onChange={(event) => setQuantity(safeQuantity(event.target.value))}
+                  />
+                  <button
+                    type="button"
+                    className={styles.qtyBtn}
+                    onClick={() => setQuantity((current) => Math.min(current + 1, 10))}
+                    aria-label="Increase quantity"
+                  >
+                    <Plus size={15} />
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.linePreview}>
+                <span>{quantityLabel}</span>
+                <strong>{linePriceLabel}</strong>
               </div>
             </div>
 
@@ -191,17 +199,15 @@ export default function ProductDetailView({ product }) {
                 onClick={handleAddToCart}
                 disabled={!canAddToCart}
               >
+                <ShoppingBag size={16} />
                 {addedState === "added" ? "Added to cart" : "Add to cart"}
               </button>
               <Link href="/cart" className={styles.secondaryAction}>
                 View cart ({itemCount})
               </Link>
             </div>
-            <a href={buyNowHref} className={styles.quickCheckout} target="_blank" rel="noreferrer">
-              Buy now on Shopify checkout
-            </a>
             {addedState === "error" ? (
-              <p className={styles.actionHint}>Could not add this variant. Try the Shopify checkout link.</p>
+              <p className={styles.actionHint}>Could not add this item right now. Please try again.</p>
             ) : null}
 
             <div className={styles.trustGrid}>
@@ -217,14 +223,6 @@ export default function ProductDetailView({ product }) {
                 );
               })}
             </div>
-
-            {hasTags ? (
-              <div className={styles.tags}>
-                {product.tags.slice(0, 8).map((tag) => (
-                  <span key={tag}>{tag}</span>
-                ))}
-              </div>
-            ) : null}
           </aside>
         </div>
 

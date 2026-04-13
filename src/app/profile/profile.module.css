@@ -1,0 +1,534 @@
+.page {
+  min-height: 80vh;
+  background: linear-gradient(160deg, #f9f5f0 0%, #f2ebe0 100%);
+  padding: 1.8rem 0 3rem;
+}
+
+.shell {
+  width: min(940px, 94vw);
+  margin: 0 auto;
+  display: grid;
+  gap: 1.1rem;
+}
+
+/* Hero card */
+.heroCard {
+  background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
+  border-radius: 22px;
+  padding: 1.6rem 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 20px 48px rgba(90, 0, 0, 0.28);
+}
+
+.heroLeft {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  background: rgba(255, 235, 190, 0.22);
+  border: 2px solid rgba(255, 220, 160, 0.35);
+  color: #ffefc4;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.heroInfo {
+  min-width: 0;
+}
+
+.heroName {
+  color: #fff8ec;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1;
+  margin: 0;
+}
+
+.heroEmail {
+  margin: 0.35rem 0 0;
+  color: rgba(255, 235, 200, 0.76);
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.83rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.logoutBtn {
+  border: 1px solid rgba(255, 220, 180, 0.3);
+  background: rgba(255, 240, 210, 0.1);
+  color: rgba(255, 230, 190, 0.9);
+  border-radius: 999px;
+  padding: 0.48rem 1rem;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+  flex: 0 0 auto;
+  text-decoration: none;
+}
+
+.logoutBtn:hover {
+  background: rgba(255, 240, 210, 0.2);
+  border-color: rgba(255, 220, 180, 0.5);
+}
+
+/* Stats row */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+}
+
+.statCard {
+  background: #fff;
+  border: 1px solid #ecddd0;
+  border-radius: 18px;
+  padding: 1.1rem 0.9rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 4px 14px rgba(64, 24, 8, 0.06);
+  text-align: center;
+}
+
+.statIcon {
+  color: #800000;
+  margin-bottom: 0.15rem;
+}
+
+.statValue {
+  color: #1c1410;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.statLabel {
+  color: #7a6a5e;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e8ddd2;
+  padding-bottom: 0;
+}
+
+.tab {
+  border: 0;
+  background: transparent;
+  color: #7a6a5e;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 0.6rem 1rem 0.8rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.tab[data-active="true"] {
+  color: #800000;
+  border-bottom-color: #800000;
+}
+
+.tab:hover:not([data-active="true"]) {
+  color: #4a3028;
+}
+
+/* Tab content */
+.tabContent {
+  min-height: 280px;
+}
+
+/* Orders */
+.ordersList {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.orderCard {
+  background: #fff;
+  border: 1px solid #ecddd0;
+  border-radius: 18px;
+  padding: 1.1rem 1.2rem;
+  box-shadow: 0 4px 16px rgba(64, 24, 8, 0.06);
+}
+
+.orderHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.orderMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.orderName {
+  color: #1c1410;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.orderDate {
+  color: #8a7a6e;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.76rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.orderRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.42rem;
+}
+
+.orderTotal {
+  color: #1d1611;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.012em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  white-space: nowrap;
+}
+
+.orderTrackBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  background: #800000;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.32rem 0.72rem;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 150ms ease;
+}
+
+.orderTrackBtn:hover {
+  background: #640000;
+}
+
+.orderBadges {
+  margin-top: 0.58rem;
+  display: flex;
+  gap: 0.42rem;
+  flex-wrap: wrap;
+}
+
+/* Status badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  border-radius: 999px;
+  padding: 0.26rem 0.62rem;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.badge--success { background: #e8f7ee; color: #1a6e3c; }
+.badge--info    { background: #e6f1fc; color: #1a4a8e; }
+.badge--pending { background: #fef6e4; color: #7a5a10; }
+.badge--error   { background: #fde8e8; color: #8e1c1c; }
+
+/* Line items */
+.lineItems {
+  margin-top: 0.85rem;
+  border-top: 1px solid #f0e6da;
+  padding-top: 0.75rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.lineItem {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.lineItemImg {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid #edddd0;
+  flex: 0 0 auto;
+}
+
+.lineItemImgFallback {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  border: 1px solid #edddd0;
+  background: #f4ede3;
+  display: grid;
+  place-items: center;
+  color: #9a8a7e;
+  flex: 0 0 auto;
+}
+
+.lineItemInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.lineItemTitle {
+  color: #2a1e18;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lineItemQty {
+  color: #8a7a6e;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+}
+
+.lineItemPrice {
+  color: #2a1e18;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+/* Empty state */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  color: #c8b0a0;
+}
+
+.emptyState h3 {
+  margin: 0;
+  color: #2a1e18;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.emptyState p {
+  margin: 0;
+  color: #7a6a5e;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.88rem;
+  max-width: 340px;
+}
+
+.shopBtn {
+  margin-top: 0.5rem;
+  background: #800000;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.65rem 1.6rem;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 150ms ease;
+}
+
+.shopBtn:hover {
+  background: #640000;
+}
+
+/* Account details */
+.detailsCard {
+  background: #fff;
+  border: 1px solid #ecddd0;
+  border-radius: 18px;
+  padding: 1.4rem 1.5rem;
+  box-shadow: 0 4px 16px rgba(64, 24, 8, 0.06);
+}
+
+.detailsTitle {
+  margin: 0 0 1rem;
+  color: #1c1410;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.detailField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.detailField label {
+  color: #8a7a6e;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.detailField span {
+  color: #1c1410;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.detailsNote {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0e6da;
+  color: #7a6a5e;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+}
+
+.detailsNote a {
+  color: #800000;
+  font-weight: 700;
+}
+
+/* Loading */
+.loadingShell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 0.8rem;
+  color: #7a6a5e;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: 0.88rem;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #ecddd0;
+  border-top-color: #800000;
+  border-radius: 999px;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 760px) {
+  .heroCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.2rem;
+  }
+
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .orderHeader {
+    flex-direction: column;
+  }
+
+  .orderRight {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .statCard {
+    padding: 0.85rem 0.6rem;
+  }
+
+  .tabs {
+    gap: 0;
+  }
+
+  .tab {
+    flex: 1;
+    justify-content: center;
+    font-size: 0.78rem;
+    padding: 0.55rem 0.5rem 0.72rem;
+  }
+}

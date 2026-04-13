@@ -4,36 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingBag, User, X } from "lucide-react";
+import { Search, ShoppingBag, User, LogOut, X, Menu } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
+import { useAuth } from "@/components/auth/AuthContext";
+import AuthModal from "@/components/auth/AuthModal";
 import styles from "./Header.module.css";
 
 const defaultNavItems = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "New Arrivals", href: "/#collections" },
-  { label: "Necklaces", href: "/#collections" },
-  { label: "Earings", href: "/#categories" },
-  { label: "Bangles/Bracelet", href: "/#collections" },
-  { label: "Curated Collection", href: "/#collections" },
-  { label: "Rings", href: "/#collections" },
-  { label: "Sale", href: "/#collections" },
-  { label: "Return & Exchange", href: "/#faqs" },
+  { label: "Sale", href: "/collections/sale" },
 ];
 
-const storefrontBaseUrl = "https://himanshubeads.myshopify.com";
-const storefrontSearchUrl = `${storefrontBaseUrl}/search`;
-const storefrontAccountUrl = `${storefrontBaseUrl}/account`;
-const storefrontAccountLoginUrl = `${storefrontBaseUrl}/account/login`;
+const storefrontSearchUrl = "https://himanshu-beadss.myshopify.com/search";
 
-function cx(...classNames) {
-  return classNames
-    .filter(Boolean)
-    .map((className) => styles[className])
-    .join(" ");
-}
-
-function RenderNavLink({ href, children, active, onClick }) {
+function NavLink({ href, children, active, onClick }) {
   if (href.startsWith("/")) {
     return (
       <Link href={href} data-active={active ? "true" : "false"} onClick={onClick}>
@@ -41,7 +27,6 @@ function RenderNavLink({ href, children, active, onClick }) {
       </Link>
     );
   }
-
   return (
     <a href={href} data-active={active ? "true" : "false"} onClick={onClick}>
       {children}
@@ -51,171 +36,229 @@ function RenderNavLink({ href, children, active, onClick }) {
 
 export default function Header({ navItems = defaultNavItems }) {
   const { itemCount } = useCart();
+  const { customer, loading: authLoading } = useAuth();
   const pathname = usePathname();
+
   const [navOpen, setNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
-  const accountMenuRef = useRef(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  const accountRef = useRef(null);
   const searchInputRef = useRef(null);
 
-  function isNavItemActive(href) {
+  function isActive(href) {
     const [path] = href.split("#");
-
-    if (!path || path === "/") {
-      return href === "/" && pathname === "/";
-    }
-
-    return pathname === path || pathname.startsWith(`${path}/`);
+    if (!path || path === "/") return href === "/" && pathname === "/";
+    return pathname === path || pathname.startsWith(path + "/");
   }
 
   useEffect(() => {
     if (!searchOpen) return;
-    const timeout = window.setTimeout(() => {
-      searchInputRef.current?.focus();
-    }, 30);
-    return () => window.clearTimeout(timeout);
+    const t = setTimeout(() => searchInputRef.current?.focus(), 40);
+    return () => clearTimeout(t);
   }, [searchOpen]);
 
   useEffect(() => {
-    if (!searchOpen && !accountOpen) return;
-
-    function handleKeyDown(event) {
-      if (event.key !== "Escape") return;
+    if (!searchOpen && !accountOpen && !navOpen) return;
+    function onKey(e) {
+      if (e.key !== "Escape") return;
       setSearchOpen(false);
       setAccountOpen(false);
+      setNavOpen(false);
     }
-
-    function handlePointerDown(event) {
-      if (!accountOpen) return;
-      if (accountMenuRef.current?.contains(event.target)) return;
-      setAccountOpen(false);
+    function onClickOutside(e) {
+      if (!accountRef.current?.contains(e.target)) setAccountOpen(false);
     }
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onClickOutside);
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClickOutside);
     };
-  }, [accountOpen, searchOpen]);
+  }, [searchOpen, accountOpen, navOpen]);
+
+  useEffect(() => {
+    document.body.style.overflow = navOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [navOpen]);
+
+  useEffect(() => {
+    function onResize() {
+      if (window.innerWidth >= 1080) {
+        setNavOpen(false);
+      }
+    }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const greeting = customer?.firstName
+    ? "Hi, " + customer.firstName
+    : (customer?.emailAddress?.emailAddress?.split("@")[0] ?? "Account");
 
   return (
-    <header className={cx("site-header")}>
-      <div className={cx("top-brand-bar")}>
-        <div className={cx("shell", "header-shell")}>
-          <button
-            className={cx("nav-toggle")}
-            type="button"
-            aria-expanded={navOpen ? "true" : "false"}
-            aria-controls="main-nav"
-            onClick={() => setNavOpen((current) => !current)}
-          >
-            Menu
-          </button>
+    <>
+      <header className={styles.header}>
+        <div className={styles.topBar}>
+          <div className={styles.topBarInner}>
 
-          <Link className={cx("brand")} href="/" aria-label="Himanshu Beads Home">
-            <Image
-              className={cx("brand-logo")}
-              src="/icons/main-logo.svg"
-              alt="Himanshu Beads Jewellery"
-              width={253}
-              height={89}
-            />
-          </Link>
-
-          <div className={cx("header-actions")} aria-label="Quick actions">
+            {/* Hamburger -- mobile only */}
             <button
-              className={cx("icon-btn")}
+              className={styles.hamburger}
               type="button"
-              aria-label="Search"
-              aria-expanded={searchOpen ? "true" : "false"}
-              onClick={() => {
-                setSearchOpen((current) => !current);
-                setAccountOpen(false);
-              }}
+              aria-label={navOpen ? "Close menu" : "Open menu"}
+              aria-expanded={navOpen}
+              aria-controls="mobile-nav"
+              onClick={() => setNavOpen((v) => !v)}
             >
-              <Search aria-hidden="true" />
+              {navOpen ? <X size={20} strokeWidth={2} /> : <Menu size={20} strokeWidth={2} />}
             </button>
-            <div className={cx("account-menu")} ref={accountMenuRef}>
-              <button
-                className={cx("icon-btn")}
-                type="button"
-                aria-label="Account"
-                aria-expanded={accountOpen ? "true" : "false"}
-                onClick={() => {
-                  setAccountOpen((current) => !current);
-                  setSearchOpen(false);
-                }}
-              >
-                <User aria-hidden="true" />
-              </button>
-              <div className={cx("account-popup")} data-open={accountOpen ? "true" : "false"}>
-                <a href={storefrontAccountLoginUrl}>Continue with Shop or Email</a>
-                <a href={storefrontAccountUrl}>My account</a>
-              </div>
-            </div>
-            <Link className={cx("icon-btn", "cart-icon-btn")} href="/cart" aria-label="Bag">
-              <ShoppingBag aria-hidden="true" />
-              {itemCount > 0 ? <span className={cx("cart-count")}>{itemCount}</span> : null}
+
+            <Link className={styles.brand} href="/" aria-label="Himanshu Beads">
+              <Image
+                src="/icons/main-logo.svg"
+                alt="Himanshu Beads Jewellery"
+                width={253}
+                height={89}
+                className={styles.logo}
+                priority
+              />
             </Link>
+
+            <div className={styles.actions}>
+              <button
+                className={styles.iconBtn}
+                type="button"
+                aria-label="Search"
+                onClick={() => { setSearchOpen((v) => !v); setAccountOpen(false); }}
+              >
+                <Search size={18} strokeWidth={1.9} />
+              </button>
+
+              {!authLoading && !customer && (
+                <button
+                  className={styles.iconBtn}
+                  type="button"
+                  aria-label="Sign in"
+                  onClick={() => setAuthModalOpen(true)}
+                >
+                  <User size={18} strokeWidth={1.9} />
+                </button>
+              )}
+
+              {!authLoading && customer && (
+                <div className={styles.accountWrap} ref={accountRef}>
+                  <button
+                    className={styles.iconBtn + " " + styles.iconBtnActive}
+                    type="button"
+                    aria-label="My account"
+                    onClick={() => setAccountOpen((v) => !v)}
+                  >
+                    <User size={18} strokeWidth={1.9} />
+                  </button>
+                  <div className={styles.dropdown} data-open={accountOpen ? "true" : "false"}>
+                    <span className={styles.dropGreeting}>{greeting}</span>
+                    <hr className={styles.dropDivider} />
+                    <a href="/api/auth/shopify/logout" className={styles.dropLink}>
+                      <LogOut size={13} /> Sign out
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              <Link className={styles.iconBtn + " " + styles.cartBtn} href="/cart" aria-label="Cart">
+                <ShoppingBag size={18} strokeWidth={1.9} />
+                {itemCount > 0 && <span className={styles.cartBadge}>{itemCount}</span>}
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className={cx("search-bar-container")} data-open={searchOpen ? "true" : "false"}>
-        <div className={cx("shell", "search-bar-shell")}>
-          <form
-            className={cx("search-bar-form")}
-            action={storefrontSearchUrl}
-            method="get"
-            role="search"
-            onSubmit={() => setSearchOpen(false)}
-          >
-            <input type="hidden" name="type" value="product" />
-            <input type="hidden" name="options[prefix]" value="last" />
-            <button className={cx("search-icon-btn")} type="submit" aria-label="Submit search">
-              <Search aria-hidden="true" />
-            </button>
-            <label className={cx("visually-hidden")} htmlFor="header-search-input">
-              Search
-            </label>
-            <input
-              ref={searchInputRef}
-              id="header-search-input"
-              className={cx("search-input")}
-              type="text"
-              name="q"
-              placeholder="Search"
-              autoComplete="off"
-            />
-            <button
-              className={cx("search-close-btn")}
-              type="button"
-              aria-label="Close search"
-              onClick={() => setSearchOpen(false)}
+        {/* Search bar */}
+        <div className={styles.searchBar} data-open={searchOpen ? "true" : "false"}>
+          <div className={styles.searchInner}>
+            <form
+              className={styles.searchForm}
+              action={storefrontSearchUrl}
+              method="get"
+              role="search"
+              onSubmit={() => setSearchOpen(false)}
             >
-              <X aria-hidden="true" />
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <div className={cx("menu-bar")}>
-        <div className={cx("shell")}>
-          <nav id="main-nav" className={cx("main-nav")} data-open={navOpen ? "true" : "false"}>
-            {navItems.map((item) => (
-              <RenderNavLink
-                key={item.label}
-                href={item.href}
-                active={isNavItemActive(item.href)}
-                onClick={() => setNavOpen(false)}
+              <input type="hidden" name="type" value="product" />
+              <input type="hidden" name="options[prefix]" value="last" />
+              <button className={styles.searchSubmit} type="submit" aria-label="Submit">
+                <Search size={16} strokeWidth={1.9} />
+              </button>
+              <label className={styles.srOnly} htmlFor="site-search">Search</label>
+              <input
+                ref={searchInputRef}
+                id="site-search"
+                className={styles.searchInput}
+                type="text"
+                name="q"
+                placeholder="Search jewellery..."
+                autoComplete="off"
+              />
+              <button
+                className={styles.searchClose}
+                type="button"
+                aria-label="Close search"
+                onClick={() => setSearchOpen(false)}
               >
-                {item.label}
-              </RenderNavLink>
-            ))}
-          </nav>
+                <X size={16} strokeWidth={1.9} />
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
-    </header>
+
+        {/* Desktop nav strip */}
+        <nav className={styles.desktopNav} aria-label="Main navigation">
+          {navItems.map((item) => (
+            <NavLink key={item.label} href={item.href} active={isActive(item.href)}>
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+      </header>
+
+      <nav className={`${styles.mobileDrawer} ${navOpen ? styles.mobileDrawerOpen : ""}`} aria-label="Mobile navigation" id="mobile-nav">
+        <div className={styles.drawerTop}>
+          <Image
+            src="/icons/main-logo.svg"
+            alt="Himanshu Beads"
+            width={160}
+            height={56}
+            className={styles.drawerLogo}
+          />
+          <button
+            className={styles.drawerClose}
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setNavOpen(false)}
+          >
+            <X size={20} strokeWidth={2} />
+          </button>
+        </div>
+        {navItems.map((item) => (
+          <NavLink
+            key={item.label}
+            href={item.href}
+            active={isActive(item.href)}
+            onClick={() => setNavOpen(false)}
+          >
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+
+      <div 
+        className={`${styles.backdrop} ${navOpen ? styles.backdropVisible : ""}`} 
+        aria-hidden="true" 
+        onClick={() => setNavOpen(false)} 
+      />
+
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+    </>
   );
 }
