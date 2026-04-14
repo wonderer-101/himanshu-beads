@@ -10,6 +10,8 @@ import {
   COOKIE_REFRESH_TOKEN,
 } from "@/lib/shopify/customerAuth";
 
+const SHOPIFY_CART_COOKIE = "hb_shopify_cart_id";
+
 export async function GET(request) {
   const appUrl = resolveAppUrl(request);
   const clearOpts = {
@@ -23,5 +25,6 @@ export async function GET(request) {
   const response = NextResponse.redirect(`${appUrl}/`);
   response.headers.append("Set-Cookie", serializeCookie(COOKIE_ACCESS_TOKEN, "", clearOpts));
   response.headers.append("Set-Cookie", serializeCookie(COOKIE_REFRESH_TOKEN, "", clearOpts));
+  response.headers.append("Set-Cookie", serializeCookie(SHOPIFY_CART_COOKIE, "", clearOpts));
   return response;
 }
