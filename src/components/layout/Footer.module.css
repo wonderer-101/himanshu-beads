@@ -54,6 +54,15 @@
   margin: 0;
   font-size: 0.76rem;
   color: #f4d7bf;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  line-height: 1.2;
+}
+
+.copyLine {
+  display: block;
 }
 
 @media (max-width: 1080px) {

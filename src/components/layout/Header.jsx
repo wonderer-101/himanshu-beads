@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Search, ShoppingBag, User, X, Menu } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 import { useAuth } from "@/components/auth/AuthContext";
@@ -13,15 +13,9 @@ import styles from "./Header.module.css";
 const defaultNavItems = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
-  { label: "New Arrivals", href: "/#collections" },
+  { label: "New Arrivals", href: "/collections/new-arrivals" },
   { label: "Sale", href: "/collections/sale" },
 ];
-
-const storefrontDomain = (process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "")
-  .trim()
-  .replace(/^https?:\/\//, "")
-  .replace(/\/+$/, "");
-const storefrontSearchUrl = `https://${storefrontDomain}/search`;
 
 function NavLink({ href, children, active, onClick }) {
   if (href.startsWith("/")) {
@@ -42,6 +36,7 @@ export default function Header({ navItems = defaultNavItems }) {
   const { itemCount } = useCart();
   const { customer, loading: authLoading } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
 
   const [navOpen, setNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -87,6 +82,18 @@ export default function Header({ navItems = defaultNavItems }) {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const query = String(formData.get("q") || "").trim();
+    if (!query) {
+      searchInputRef.current?.focus();
+      return;
+    }
+    setSearchOpen(false);
+    router.push(`/collections/search?q=${encodeURIComponent(query)}`);
+  }
 
   return (
     <>
@@ -161,13 +168,9 @@ export default function Header({ navItems = defaultNavItems }) {
           <div className={styles.searchInner}>
             <form
               className={styles.searchForm}
-              action={storefrontSearchUrl}
-              method="get"
               role="search"
-              onSubmit={() => setSearchOpen(false)}
+              onSubmit={handleSearchSubmit}
             >
-              <input type="hidden" name="type" value="product" />
-              <input type="hidden" name="options[prefix]" value="last" />
               <button className={styles.searchSubmit} type="submit" aria-label="Submit">
                 <Search size={16} strokeWidth={1.9} />
               </button>

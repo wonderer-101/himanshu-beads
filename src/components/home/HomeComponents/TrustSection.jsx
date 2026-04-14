@@ -183,7 +183,7 @@ const FAQS = [
   { q: "What products does Himanshu Beads offer?", a: "We offer Necklaces, Earrings, Bangles/Bracelets, Rings, Pendants, Chokers, and curated jewellery collections including American Diamond and Kundan & Polki." },
   { q: "Are the beads suitable for daily-wear jewellery?", a: "Yes, collections include both daily-wear friendly options and premium statement sets, so you can choose based on comfort and occasion." },
   { q: "How do you ensure the quality of your beads?", a: "We focus on premium quality beads, curated craftsmanship, and checks for finishing consistency before dispatch." },
-  { q: "How can I place an order or get in touch?", a: "Reach us through Email or Call/WhatsApp in the contact section below at info@himanshubeads.in." },
+  { q: "How can I place an order or get in touch?", a: "Reach us through Email or Call/WhatsApp in the contact section below at himanshubeads18@gmail.com." },
 ];
 
 function Faq() {
@@ -205,8 +205,8 @@ function Faq() {
             </button>
             {open === i && (
               <p className={styles.faqAnswer}>
-                {item.a.includes("info@himanshubeads.in") ? (
-                  <>Reach us through Email or Call/WhatsApp in the contact section below at <a href="mailto:info@himanshubeads.in">info@himanshubeads.in</a>.</>
+                {item.a.includes("himanshubeads18@gmail.com") ? (
+                  <>Reach us through Email or Call/WhatsApp in the contact section below at <a href="mailto:himanshubeads18@gmail.com">himanshubeads18@gmail.com</a>.</>
                 ) : item.a}
               </p>
             )}

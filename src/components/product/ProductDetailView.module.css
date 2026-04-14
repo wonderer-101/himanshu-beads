@@ -49,6 +49,14 @@
   max-height: 86vh;
   overflow-y: auto;
   padding-right: 0.2rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.thumbs::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 .thumbBtn {
@@ -401,45 +409,331 @@
 }
 
 @media (max-width: 980px) {
+  .page {
+    padding: 1.1rem 0 2rem;
+  }
+
+  .shell {
+    width: min(1200px, 94vw);
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+    row-gap: 0.2rem;
+  }
+
   .layout {
     grid-template-columns: 1fr;
+    gap: 0.95rem;
   }
 
-  .galleryLayout {
-    grid-template-columns: 1fr;
+  .mediaColumn,
+  .detailsColumn {
+    border-radius: 18px;
   }
 
-  .thumbs {
-    grid-auto-flow: column;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    overflow-x: auto;
-    overflow-y: hidden;
-    max-height: none;
-    padding-bottom: 0.2rem;
-    padding-right: 0;
+  .mediaColumn {
+    padding: 0.8rem;
+  }
+
+  .detailsColumn {
+    padding: 1rem 0.95rem;
+  }
+
+  .title {
+    margin-top: 0.62rem;
+    font-size: clamp(1.78rem, 5.4vw, 2.25rem);
+  }
+
+  .ratingRow {
+    margin-top: 0.52rem;
+    font-size: 0.9rem;
+  }
+
+  .priceWrap {
+    margin-top: 0.6rem;
+    gap: 0.56rem;
+  }
+
+  .price {
+    font-size: clamp(1.5rem, 5.2vw, 1.95rem);
+  }
+
+  .comparePrice {
+    font-size: clamp(0.92rem, 3.6vw, 1.08rem);
+  }
+
+  .shippingNote {
+    font-size: 0.84rem;
+  }
+
+  .purchasePanel {
+    margin-top: 0.82rem;
+    border-radius: 12px;
+    padding: 0.7rem 0.72rem;
+  }
+
+  .actions {
+    margin-top: 0.82rem;
+    gap: 0.52rem;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    font-size: 0.9rem;
+    min-height: 42px;
+    padding: 0.66rem 1rem;
+  }
+
+  .trustGrid {
+    margin-top: 0.82rem;
+    gap: 0.52rem;
+  }
+
+  .trustItem {
+    border-radius: 10px;
+    padding: 0.5rem 0.56rem;
+    font-size: 0.75rem;
+  }
+
+  .descriptionCard {
+    margin-top: 0.95rem;
+    border-radius: 18px;
+    padding: 0.95rem;
+  }
+
+  .descriptionCard h2 {
+    margin-bottom: 0.52rem;
+    font-size: clamp(1.42rem, 4.8vw, 1.9rem);
+  }
+
+  .descriptionText {
+    font-size: 0.88rem;
+    line-height: 1.52;
   }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 760px) {
+  .page {
+    padding: 0.9rem 0 1.7rem;
+  }
+
   .shell {
-    width: min(1200px, 94vw);
+    width: min(1200px, 96vw);
   }
 
   .mediaColumn,
   .detailsColumn,
   .descriptionCard {
-    border-radius: 16px;
+    border-radius: 14px;
   }
 
-  .detailsColumn {
-    padding: 1rem 0.9rem;
+  .galleryLayout {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
   }
 
-  .purchasePanel {
-    padding: 0.72rem 0.72rem;
+  .mainMedia {
+    order: 1;
+    border-radius: 12px;
+  }
+
+  .thumbs {
+    order: 2;
+    grid-auto-flow: column;
+    grid-auto-columns: 72px;
+    grid-template-columns: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: none;
+    gap: 0.5rem;
+    padding: 0.12rem 0.12rem 0.2rem;
+    padding-right: 0.15rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .thumbBtn {
+    border-radius: 10px;
+    scroll-snap-align: start;
+  }
+
+  .thumbBtn img {
+    aspect-ratio: 1;
+  }
+
+  .mainImage,
+  .mainFallback {
+    aspect-ratio: 1;
+  }
+
+  .saleBadge {
+    font-size: 1.03rem;
+    padding: 0.28rem 0.64rem;
+  }
+
+  .title {
+    margin-top: 0.52rem;
+    font-size: clamp(1.58rem, 6.7vw, 1.95rem);
+    line-height: 1.02;
+  }
+
+  .titleNoBadge {
+    margin-top: 0.06rem;
+  }
+
+  .ratingRow {
+    margin-top: 0.44rem;
+    gap: 0.42rem;
+    font-size: 0.86rem;
+  }
+
+  .stars {
+    gap: 0.08rem;
+  }
+
+  .priceWrap {
+    margin-top: 0.52rem;
+  }
+
+  .price {
+    font-size: clamp(1.35rem, 6.2vw, 1.78rem);
+  }
+
+  .shippingNote {
+    margin-top: 0.28rem;
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .quantityWrap {
+    gap: 0.45rem;
+  }
+
+  .quantityWrap label {
+    font-size: 0.71rem;
+    letter-spacing: 0.065em;
+  }
+
+  .quantityControl {
+    grid-template-columns: 36px 52px 36px;
+  }
+
+  .linePreview {
+    margin-top: 0.52rem;
+    padding-top: 0.46rem;
+  }
+
+  .linePreview span {
+    font-size: 0.74rem;
+  }
+
+  .linePreview strong {
+    font-size: 1rem;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    font-size: 0.85rem;
+    min-height: 40px;
+    padding: 0.56rem 0.88rem;
+  }
+
+  .actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.48rem;
+  }
+
+  .actionHint {
+    font-size: 0.73rem;
   }
 
   .trustGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .trustIcon {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+  }
+}
+
+@media (max-width: 680px) {
+  .shell {
+    width: min(1200px, 96.5vw);
+  }
+
+  .mediaColumn,
+  .detailsColumn,
+  .descriptionCard {
+    border-radius: 13px;
+  }
+
+  .detailsColumn {
+    padding: 0.82rem 0.74rem;
+  }
+
+  .mediaColumn {
+    padding: 0.62rem;
+  }
+
+  .purchasePanel {
+    padding: 0.58rem 0.58rem;
+  }
+
+  .trustGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .descriptionCard {
+    margin-top: 0.78rem;
+    padding: 0.8rem 0.74rem;
+  }
+
+  .descriptionText {
+    font-size: 0.83rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .breadcrumb {
+    font-size: 0.73rem;
+  }
+
+  .title {
+    font-size: clamp(1.42rem, 7vw, 1.74rem);
+  }
+
+  .ratingRow {
+    font-size: 0.8rem;
+  }
+
+  .price {
+    font-size: 1.56rem;
+  }
+
+  .comparePrice {
+    font-size: 0.88rem;
+  }
+
+  .quantityControl {
+    grid-template-columns: 34px 48px 34px;
+  }
+
+  .quantityControl input {
+    font-size: 0.88rem;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    min-height: 38px;
+    font-size: 0.81rem;
+    padding: 0.5rem 0.58rem;
+  }
+
+  .trustItem {
+    font-size: 0.72rem;
   }
 }

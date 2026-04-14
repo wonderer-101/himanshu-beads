@@ -1,0 +1,131 @@
+.page {
+  min-height: 100vh;
+  background: #fffaf4;
+  color: #231812;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  padding: 2rem 1rem 3rem;
+}
+
+.shell {
+  width: min(960px, 92vw);
+  margin: 0 auto;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e7d8c8;
+  border-radius: 16px;
+  padding: clamp(1rem, 1.8vw, 2rem);
+}
+
+.header {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee0d2;
+  padding-bottom: 0.8rem;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.05;
+}
+
+.updated {
+  margin: 0.35rem 0 0;
+  color: #7a6658;
+  font-size: 0.84rem;
+}
+
+.content {
+  color: #43362e;
+  line-height: 1.7;
+  display: grid;
+  gap: 1rem;
+}
+
+.content h2 {
+  margin: 0 0 0.35rem;
+  color: #251a13;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+}
+
+.content p {
+  margin: 0;
+}
+
+.content ul {
+  margin: 0.45rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.content li + li {
+  margin-top: 0.25rem;
+}
+
+.actions {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee0d2;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.primaryBtn {
+  color: #fff;
+  background: #800000;
+}
+
+.primaryBtn:hover {
+  background: #5e0000;
+}
+
+.secondaryBtn {
+  color: #800000;
+  border: 1px solid #c9ad98;
+  background: #fff;
+}
+
+.secondaryBtn:hover {
+  border-color: #800000;
+}
+
+@media (max-width: 680px) {
+  .page {
+    padding: 1.2rem 0.75rem 2rem;
+  }
+
+  .shell {
+    width: min(960px, 95vw);
+  }
+
+  .card {
+    border-radius: 12px;
+    padding: 0.85rem 0.8rem;
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .primaryBtn,
+  .secondaryBtn {
+    width: 100%;
+  }
+}

@@ -775,72 +775,415 @@
 
 /* Responsive */
 @media (max-width: 760px) {
+  .page {
+    padding: 1rem 0 2rem;
+  }
+
+  .shell {
+    width: min(980px, 96vw);
+    gap: 0.85rem;
+  }
+
   .heroCard {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.2rem;
+    border-radius: 16px;
+    gap: 0.9rem;
+    padding: 1rem;
+    box-shadow: 0 12px 32px rgba(90, 0, 0, 0.22);
+  }
+
+  .heroLeft {
+    gap: 0.8rem;
+  }
+
+  .avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 1.35rem;
+  }
+
+  .heroName {
+    font-size: clamp(1.28rem, 6vw, 1.65rem);
+  }
+
+  .heroEmail {
+    font-size: 0.76rem;
+    margin-top: 0.28rem;
+  }
+
+  .logoutBtn {
+    width: 100%;
+    justify-content: center;
+    min-height: 36px;
   }
 
   .statsRow {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
+  }
+
+  .tabContent {
+    min-height: 220px;
+  }
+
+  .tabs {
+    gap: 0.45rem;
+    border-bottom: 0;
+    overflow-x: auto;
+    padding: 0.1rem 0.1rem 0.15rem;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    flex: 0 0 auto;
+    border: 1px solid #dcc8b8;
+    border-radius: 999px;
+    background: #fff;
+    color: #6f5b4e;
+    margin-bottom: 0;
+    min-height: 36px;
+    padding: 0.42rem 0.8rem;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .tab[data-active="true"] {
+    background: #800000;
+    border-color: #800000;
+    color: #fff;
+  }
+
+  .orderCard {
+    border-radius: 14px;
+    padding: 0.85rem;
   }
 
   .orderHeader {
     flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .orderName {
+    font-size: 1.1rem;
+  }
+
+  .orderDate {
+    font-size: 0.71rem;
   }
 
   .orderRight {
-    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
     align-items: center;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .orderTotal {
+    font-size: 1.02rem;
+  }
+
+  .orderTrackBtn {
+    min-height: 30px;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.7rem;
+  }
+
+  .orderBadges {
+    margin-top: 0.5rem;
+  }
+
+  .lineItems {
+    margin-top: 0.6rem;
+    padding-top: 0.62rem;
+    gap: 0.48rem;
+  }
+
+  .lineItemImg,
+  .lineItemImgFallback {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+  }
+
+  .lineItemTitle {
+    font-size: 0.76rem;
+  }
+
+  .lineItemQty {
+    font-size: 0.68rem;
+  }
+
+  .lineItemPrice {
+    font-size: 0.82rem;
+  }
+
+  .detailsCard {
+    border-radius: 14px;
+    padding: 0.95rem 0.85rem;
+  }
+
+  .detailsTitle {
+    font-size: 1.22rem;
+    margin-bottom: 0.78rem;
   }
 
   .detailsGrid {
     grid-template-columns: 1fr;
+    gap: 0.68rem;
+  }
+
+  .detailField label {
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+  }
+
+  .detailField span {
+    font-size: 0.87rem;
+  }
+
+  .sectionHeading {
+    font-size: 1.06rem;
   }
 
   .formGrid {
     grid-template-columns: 1fr;
+    gap: 0.58rem;
+  }
+
+  .profileEditForm,
+  .addressForm {
+    margin-top: 0.78rem;
+    border-radius: 12px;
+    padding: 0.72rem;
+  }
+
+  .formField span {
+    font-size: 0.64rem;
+    letter-spacing: 0.07em;
+  }
+
+  .formField input {
+    min-height: 40px;
+    font-size: 0.82rem;
+  }
+
+  .formActions {
+    margin-top: 0.7rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+    align-items: stretch;
+  }
+
+  .primaryActionBtn,
+  .secondaryActionBtn,
+  .detailsActionBtn {
+    width: 100%;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0.42rem 0.9rem;
+    font-size: 0.75rem;
+  }
+
+  .addressSection {
+    margin-top: 0.82rem;
+  }
+
+  .addressSectionHeader {
+    align-items: stretch;
+  }
+
+  .inlineHint {
+    margin-top: 0.5rem;
+    font-size: 0.73rem;
+  }
+
+  .addressCard {
+    border-radius: 11px;
+    padding: 0.65rem 0.65rem;
+  }
+
+  .addressTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+  }
+
+  .addressTitleWrap {
+    font-size: 0.74rem;
+  }
+
+  .addressActions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .addressActions button {
+    justify-content: center;
+    min-height: 32px;
+    font-size: 0.68rem;
+    padding: 0.22rem 0.45rem;
+  }
+
+  .addressText {
+    font-size: 0.74rem;
+    line-height: 1.35;
+    margin-top: 0.48rem;
+  }
+
+  .addressSubText {
+    font-size: 0.7rem;
+  }
+
+  .detailsNote {
+    margin-top: 0.95rem;
+    padding-top: 0.78rem;
+    font-size: 0.74rem;
   }
 }
 
 @media (max-width: 480px) {
+  .page {
+    padding: 0.78rem 0 1.6rem;
+  }
+
+  .shell {
+    width: min(980px, 97vw);
+    gap: 0.72rem;
+  }
+
+  .heroCard {
+    border-radius: 14px;
+    padding: 0.82rem 0.74rem;
+  }
+
+  .heroEmail {
+    font-size: 0.72rem;
+  }
+
   .statsRow {
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 
   .statCard {
-    padding: 0.75rem 0.6rem;
-    gap: 0.55rem;
+    border-radius: 12px;
+    padding: 0.62rem 0.52rem;
+    gap: 0.48rem;
   }
 
   .statIconWrap {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
   }
 
   .statValue {
-    font-size: 1.35rem;
+    font-size: 1.18rem;
   }
 
   .statTextValue {
-    font-size: 0.92rem;
+    font-size: 0.82rem;
   }
 
   .statLabel {
-    font-size: 0.68rem;
+    font-size: 0.62rem;
   }
 
   .tabs {
-    gap: 0;
+    gap: 0.4rem;
   }
 
   .tab {
-    flex: 1;
-    justify-content: center;
+    min-height: 34px;
+    font-size: 0.72rem;
+    padding: 0.38rem 0.62rem;
+    gap: 0.28rem;
+  }
+
+  .orderCard {
+    border-radius: 12px;
+    padding: 0.68rem;
+  }
+
+  .orderName {
+    font-size: 0.98rem;
+  }
+
+  .orderTotal {
+    font-size: 0.92rem;
+  }
+
+  .lineItem {
+    gap: 0.5rem;
+  }
+
+  .lineItemImg,
+  .lineItemImgFallback {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+  }
+
+  .lineItemTitle {
+    font-size: 0.72rem;
+  }
+
+  .lineItemPrice {
+    font-size: 0.76rem;
+  }
+
+  .detailsCard {
+    border-radius: 12px;
+    padding: 0.75rem 0.68rem;
+  }
+
+  .detailsTitle {
+    font-size: 1.1rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .sectionHeading {
+    font-size: 0.96rem;
+  }
+
+  .profileEditForm,
+  .addressForm {
+    padding: 0.62rem;
+    border-radius: 10px;
+  }
+
+  .formField input {
+    min-height: 37px;
+    border-radius: 9px;
     font-size: 0.78rem;
-    padding: 0.55rem 0.5rem 0.72rem;
+    padding: 0.44rem 0.55rem;
+  }
+
+  .primaryActionBtn,
+  .secondaryActionBtn,
+  .detailsActionBtn {
+    min-height: 34px;
+    font-size: 0.71rem;
+  }
+
+  .addressActions button {
+    min-height: 30px;
+    font-size: 0.66rem;
+  }
+
+  .addressText {
+    font-size: 0.71rem;
+  }
+
+  .addressSubText,
+  .detailsNote,
+  .inlineHint {
+    font-size: 0.68rem;
   }
 }

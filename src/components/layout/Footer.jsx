@@ -15,7 +15,9 @@ function cx(...classNames) {
 }
 
 export default function Footer({ collections = [] }) {
-  const visibleCollections = collections.length > 0 ? collections.slice(0, 6) : fallbackCollections;
+  const maxCollections = 6;
+  const visibleCollections =
+    collections.length > 0 ? collections.slice(0, maxCollections) : fallbackCollections.slice(0, maxCollections);
 
   return (
     <footer className={cx("site-footer")}>
@@ -23,12 +25,12 @@ export default function Footer({ collections = [] }) {
         <section>
           <h3>Help Center</h3>
           <a href="/#faqs">FAQ</a>
-          <a href="#footer-contact">Contact Us</a>
-          <a href="/#faqs">Return Policy</a>
-          <a href="/#faqs">Shipping & Delivery</a>
-          <a href="/#faqs">Terms & Conditions</a>
-          <a href="mailto:info@himanshubeads.in">Order Support</a>
-          <a href="/about">Privacy Policy</a>
+          <Link href="/contact-us">Contact Us</Link>
+          <Link href="/cancellation-refund">Return Policy</Link>
+          <Link href="/shipping-delivery">Shipping & Delivery</Link>
+          <Link href="/terms-and-conditions">Terms & Conditions</Link>
+          <a href="mailto:himanshubeads18@gmail.com">Order Support</a>
+          <Link href="/privacy-policy">Privacy Policy</Link>
         </section>
 
         <section>
@@ -59,23 +61,26 @@ export default function Footer({ collections = [] }) {
           <p>
             <strong>Email</strong>
             <br />
-            <a href="mailto:info@himanshubeads.in">info@himanshubeads.in</a>
+            <a href="mailto:himanshubeads18@gmail.com">himanshubeads18@gmail.com</a>
           </p>
           <p>
             <strong>Call/Whatsapp</strong>
             <br />
-            <a href="mailto:info@himanshubeads.in">info@himanshubeads.in</a>
+            <a href="tel:+918619299132">+91 861 929 9132</a>
           </p>
           <p>
-            <strong>GST Registeration Number</strong>
+            <strong>Support</strong>
             <br />
-            <a href="mailto:info@himanshubeads.in">info@himanshubeads.in</a>
+            <a href="mailto:himanshubeads18@gmail.com">himanshubeads18@gmail.com</a>
           </p>
         </section>
       </div>
 
       <div className={cx("shell", "footer-bottom")}>
-        <p>Himanshu Beads All Copyright Reserved</p>
+        <p>
+          <span className={styles.copyLine}>Himanshu Beads</span>
+          <span className={styles.copyLine}>© All Rights Reserved</span>
+        </p>
       </div>
     </footer>
   );

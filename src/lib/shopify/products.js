@@ -52,8 +52,8 @@ const PRODUCT_DETAIL_NODE_FIELDS = `
 `;
 
 const PRODUCTS_QUERY = `
-  query StorefrontProducts($first: Int!, $query: String) {
-    products(first: $first, query: $query, sortKey: UPDATED_AT, reverse: true) {
+  query StorefrontProducts($first: Int!, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
+    products(first: $first, query: $query, sortKey: $sortKey, reverse: $reverse) {
       edges {
         node {
           ${PRODUCT_LIST_NODE_FIELDS}
@@ -145,7 +145,13 @@ function mapProductDetail(node) {
   };
 }
 
-export async function getAdminProducts({ limit, query = "", collectionId = "" }) {
+export async function getAdminProducts({
+  limit,
+  query = "",
+  collectionId = "",
+  sortKey = "UPDATED_AT",
+  reverse = true,
+}) {
   // collectionId in Storefront API is a handle (string) not a GID
   // Support both GID format (legacy) and plain handle
   let collectionHandle = collectionId;
@@ -163,7 +169,12 @@ export async function getAdminProducts({ limit, query = "", collectionId = "" })
         }
       : {
           query: PRODUCTS_QUERY,
-          variables: { first: limit, query: query || undefined },
+          variables: {
+            first: limit,
+            query: query || undefined,
+            sortKey: sortKey || "UPDATED_AT",
+            reverse: Boolean(reverse),
+          },
         }
   );
 
