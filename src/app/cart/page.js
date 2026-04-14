@@ -25,7 +25,6 @@ export default function CartPage() {
     itemCount,
     subtotalAmount,
     subtotalCurrency,
-    checkoutUrl,
     updateQuantity,
     removeItem,
     clearCart,
@@ -38,9 +37,7 @@ export default function CartPage() {
       redirectToShopifyLogin();
       return;
     }
-    if (checkoutUrl) {
-      redirectTo(checkoutUrl);
-    }
+    redirectTo("/checkout");
   }
 
   let content;
@@ -169,15 +166,9 @@ export default function CartPage() {
               <strong>{formatMoney(subtotalAmount, subtotalCurrency)}</strong>
             </div>
             <p className={styles.summaryHint}>Taxes and shipping are calculated on Shopify checkout.</p>
-            {checkoutUrl ? (
-              <a href={checkoutUrl} className={styles.primaryBtn} onClick={handleCheckout}>
-                Checkout
-              </a>
-            ) : (
-              <button type="button" className={styles.disabledBtn} disabled>
-                Checkout unavailable
-              </button>
-            )}
+            <button type="button" className={styles.primaryBtn} onClick={handleCheckout} disabled={authLoading}>
+              Checkout
+            </button>
             <Link href="/" className={styles.secondaryBtn}>
               Continue Shopping
             </Link>

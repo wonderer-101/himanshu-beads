@@ -12,7 +12,6 @@ import {
 } from "@/lib/client/shopifyClient";
 
 const STORAGE_KEY = "hb_cart_v1";
-const FALLBACK_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "";
 
 const CartContext = createContext(null);
 
@@ -66,7 +65,7 @@ function sanitizeItem(rawItem) {
     title: String(rawItem?.title || "Product"),
     image: normalizeImage(rawItem?.image),
     price: normalizePrice(rawItem?.price),
-    storeDomain: normalizeStoreDomain(rawItem?.storeDomain || FALLBACK_STORE_DOMAIN),
+    storeDomain: normalizeStoreDomain(rawItem?.storeDomain),
     quantity: normalizeQuantity(rawItem?.quantity),
   };
 }
@@ -339,40 +338,15 @@ export function CartProvider({ children }) {
     [items]
   );
 
-  const guestCartUrl = useMemo(() => {
-    if (!items.length) {
-      return "";
-    }
-
-    const lineItems = items.filter(
-      (item) => /^\d+$/.test(item.variantNumericId) && normalizeQuantity(item.quantity) > 0
-    );
-    if (!lineItems.length) {
-      return "";
-    }
-
-    const storeDomain =
-      lineItems.find((item) => item.storeDomain)?.storeDomain ||
-      normalizeStoreDomain(FALLBACK_STORE_DOMAIN);
-    if (!storeDomain) {
-      return "";
-    }
-
-    const encoded = lineItems.map((item) => `${item.variantNumericId}:${item.quantity}`).join(",");
-    return `https://${storeDomain}/cart/${encoded}`;
-  }, [items]);
-
   const cartUrl = useMemo(() => {
-    if (!isLoggedIn) return guestCartUrl;
     if (!checkoutUrl) return "";
     return checkoutUrl.split("?")[0] || "";
-  }, [checkoutUrl, guestCartUrl, isLoggedIn]);
+  }, [checkoutUrl]);
 
   const effectiveCheckoutUrl = useMemo(() => {
-    if (isLoggedIn) return checkoutUrl;
-    if (!guestCartUrl) return "";
-    return `${guestCartUrl}?checkout`;
-  }, [checkoutUrl, guestCartUrl, isLoggedIn]);
+    if (!isLoggedIn) return "";
+    return checkoutUrl;
+  }, [checkoutUrl, isLoggedIn]);
 
   const value = useMemo(
     () => ({
