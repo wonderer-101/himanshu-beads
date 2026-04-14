@@ -176,9 +176,20 @@ function mapCartToResponse(cart) {
     })
     .filter(Boolean);
 
+  let checkoutUrl = String(cart?.checkoutUrl || "");
+  if (checkoutUrl && storeDomain) {
+    try {
+      const parsed = new URL(checkoutUrl);
+      parsed.host = storeDomain;
+      checkoutUrl = parsed.toString();
+    } catch {
+      // Keep original checkout URL if parsing fails.
+    }
+  }
+
   return {
     id: cart?.id || "",
-    checkoutUrl: cart?.checkoutUrl || "",
+    checkoutUrl,
     itemCount: Number(cart?.totalQuantity || items.reduce((acc, item) => acc + item.quantity, 0)),
     subtotalAmount: Number.parseFloat(cart?.cost?.subtotalAmount?.amount || "0") || 0,
     subtotalCurrency: cart?.cost?.subtotalAmount?.currencyCode || "INR",
