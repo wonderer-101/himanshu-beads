@@ -309,31 +309,47 @@ export default function ProfilePage() {
           {/* Stats row */}
           <div className={styles.statsRow}>
             <div className={styles.statCard}>
-              <ShoppingBag size={20} className={styles.statIcon} />
-              <span className={styles.statValue}>{orders.length}</span>
-              <span className={styles.statLabel}>Total Orders</span>
+              <div className={styles.statIconWrap}>
+                <ShoppingBag size={19} className={styles.statIcon} />
+              </div>
+              <div className={styles.statCopy}>
+                <span className={styles.statValue}>{orders.length}</span>
+                <span className={styles.statLabel}>Total Orders</span>
+              </div>
             </div>
             <div className={styles.statCard}>
-              <CheckCircle size={20} className={styles.statIcon} />
-              <span className={styles.statValue}>
-                {orders.filter(o => (o.fulfillmentStatus || "").toLowerCase() === "fulfilled").length}
-              </span>
-              <span className={styles.statLabel}>Delivered</span>
+              <div className={styles.statIconWrap}>
+                <CheckCircle size={19} className={styles.statIcon} />
+              </div>
+              <div className={styles.statCopy}>
+                <span className={styles.statValue}>
+                  {orders.filter(o => (o.fulfillmentStatus || "").toLowerCase() === "fulfilled").length}
+                </span>
+                <span className={styles.statLabel}>Delivered</span>
+              </div>
             </div>
             <div className={styles.statCard}>
-              <Truck size={20} className={styles.statIcon} />
-              <span className={styles.statValue}>
-                {orders.filter(o => {
-                  const s = (o.fulfillmentStatus || "").toLowerCase();
-                  return s === "unfulfilled" || s === "in_progress" || s === "partial";
-                }).length}
-              </span>
-              <span className={styles.statLabel}>In Transit</span>
+              <div className={styles.statIconWrap}>
+                <Truck size={19} className={styles.statIcon} />
+              </div>
+              <div className={styles.statCopy}>
+                <span className={styles.statValue}>
+                  {orders.filter(o => {
+                    const s = (o.fulfillmentStatus || "").toLowerCase();
+                    return s === "unfulfilled" || s === "in_progress" || s === "partial";
+                  }).length}
+                </span>
+                <span className={styles.statLabel}>In Transit</span>
+              </div>
             </div>
             <div className={styles.statCard}>
-              <User size={20} className={styles.statIcon} />
-              <span className={styles.statValue} style={{ fontSize: "0.95rem" }}>Active</span>
-              <span className={styles.statLabel}>Account</span>
+              <div className={styles.statIconWrap}>
+                <User size={19} className={styles.statIcon} />
+              </div>
+              <div className={styles.statCopy}>
+                <span className={`${styles.statValue} ${styles.statTextValue}`}>Active</span>
+                <span className={styles.statLabel}>Account</span>
+              </div>
             </div>
           </div>
 
