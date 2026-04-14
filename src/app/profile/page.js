@@ -345,7 +345,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab("orders")}
             >
               <Package size={15} />
-              Order History
+              Orders
             </button>
             <button
               className={styles.tab}
@@ -353,7 +353,15 @@ export default function ProfilePage() {
               onClick={() => setActiveTab("details")}
             >
               <User size={15} />
-              Account Details
+              My Details
+            </button>
+            <button
+              className={styles.tab}
+              data-active={activeTab === "addresses" ? "true" : "false"}
+              onClick={() => setActiveTab("addresses")}
+            >
+              <MapPin size={15} />
+              Addresses
             </button>
           </div>
 
@@ -498,9 +506,24 @@ export default function ProfilePage() {
                   </div>
                 </form>
 
+                <p className={styles.detailsNote}>
+                  You can still manage everything directly in your
+                  <a href={customerAccountUrl} target="_blank" rel="noreferrer">
+                    {" "}Shopify account page
+                  </a>.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Addresses tab */}
+          {activeTab === "addresses" && (
+            <div className={styles.tabContent}>
+              <div className={styles.detailsCard}>
+                <h2 className={styles.detailsTitle}>Manage Addresses</h2>
                 <div className={styles.addressSection}>
                   <div className={styles.addressSectionHeader}>
-                    <h3 className={styles.sectionHeading}>Manage Addresses</h3>
+                    <h3 className={styles.sectionHeading}>Your Addresses</h3>
                     <button type="button" className={styles.secondaryActionBtn} onClick={resetAddressForm}>
                       <Plus size={14} />
                       Add New
@@ -684,7 +707,7 @@ export default function ProfilePage() {
                 </div>
 
                 <p className={styles.detailsNote}>
-                  You can still manage everything directly in your
+                  You can also manage addresses in your
                   <a href={customerAccountUrl} target="_blank" rel="noreferrer">
                     {" "}Shopify account page
                   </a>.
