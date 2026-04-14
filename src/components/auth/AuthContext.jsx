@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { fetchCurrentCustomer } from "@/lib/client/shopifyClient";
 
 const AuthContext = createContext({
   customer: null,      // { id, firstName, lastName, emailAddress: { emailAddress } } | null
@@ -14,13 +15,8 @@ export function AuthProvider({ children }) {
 
   const refetch = useCallback(async () => {
     try {
-      const res = await fetch("/api/auth/shopify/me");
-      if (res.ok) {
-        const data = await res.json();
-        setCustomer(data.customer ?? null);
-      } else {
-        setCustomer(null);
-      }
+      const data = await fetchCurrentCustomer();
+      setCustomer(data.customer ?? null);
     } catch {
       setCustomer(null);
     } finally {

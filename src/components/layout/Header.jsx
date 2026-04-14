@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Search, ShoppingBag, User, X, Menu } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 import { useAuth } from "@/components/auth/AuthContext";
+import { redirectToShopifyLogin } from "@/lib/client/navigation";
 import styles from "./Header.module.css";
 
 const defaultNavItems = [
@@ -131,9 +132,7 @@ export default function Header({ navItems = defaultNavItems }) {
                   className={styles.iconBtn}
                   type="button"
                   aria-label="Sign in"
-                  onClick={() => {
-                    window.location.href = "/api/auth/shopify/login";
-                  }}
+                  onClick={redirectToShopifyLogin}
                 >
                   <User size={18} strokeWidth={1.9} />
                 </button>

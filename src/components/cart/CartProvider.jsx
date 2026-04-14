@@ -2,9 +2,16 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/components/auth/AuthContext";
+import {
+  addShopifyCartItem,
+  clearShopifyCart,
+  fetchShopifyCart,
+  removeShopifyCartItem,
+  syncGuestCartToShopify,
+  updateShopifyCartItemQuantity,
+} from "@/lib/client/shopifyClient";
 
 const STORAGE_KEY = "hb_cart_v1";
-const SHOPIFY_CART_ENDPOINT = "/api/shopify/cart";
 const FALLBACK_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "";
 
 const CartContext = createContext(null);
@@ -140,30 +147,14 @@ export function CartProvider({ children }) {
     setCheckoutUrl(String(cart?.checkoutUrl || ""));
   }, []);
 
-  const requestShopifyCart = useCallback(async (method = "GET", payload = null) => {
-    const init = { method, cache: "no-store" };
-    if (payload !== null) {
-      init.headers = { "Content-Type": "application/json" };
-      init.body = JSON.stringify(payload);
-    }
-
-    const res = await fetch(SHOPIFY_CART_ENDPOINT, init);
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data?.ok || !data?.cart) {
-      const message = data?.error || `Cart request failed (${res.status})`;
-      throw new Error(message);
-    }
-    return data.cart;
-  }, []);
-
   const reloadShopifyCart = useCallback(async () => {
     try {
-      const cart = await requestShopifyCart("GET");
+      const cart = await fetchShopifyCart();
       applyShopifyCart(cart);
     } catch {
       // Keep optimistic client state if refresh fails.
     }
-  }, [applyShopifyCart, requestShopifyCart]);
+  }, [applyShopifyCart]);
 
   useEffect(() => {
     if (authLoading) {
@@ -189,11 +180,8 @@ export function CartProvider({ children }) {
 
       try {
         const cart = guestItems.length
-          ? await requestShopifyCart("POST", {
-              action: "sync",
-              items: toSyncPayload(guestItems),
-            })
-          : await requestShopifyCart("GET");
+          ? await syncGuestCartToShopify(toSyncPayload(guestItems))
+          : await fetchShopifyCart();
         synced = true;
         if (cancelled) return;
         applyShopifyCart(cart);
@@ -216,7 +204,7 @@ export function CartProvider({ children }) {
     return () => {
       cancelled = true;
     };
-  }, [applyShopifyCart, authLoading, isLoggedIn, requestShopifyCart]);
+  }, [applyShopifyCart, authLoading, isLoggedIn]);
 
   useEffect(() => {
     if (!hasHydrated || isLoggedIn) {
@@ -242,8 +230,7 @@ export function CartProvider({ children }) {
       }
 
       setItems((current) => mergeItemIntoList(current, incoming));
-      void requestShopifyCart("POST", {
-        action: "add",
+      void addShopifyCartItem({
         variantNumericId: incoming.variantNumericId,
         quantity: incoming.quantity,
       })
@@ -253,7 +240,7 @@ export function CartProvider({ children }) {
         });
       return true;
     },
-    [applyShopifyCart, isLoggedIn, reloadShopifyCart, requestShopifyCart]
+    [applyShopifyCart, isLoggedIn, reloadShopifyCart]
   );
 
   const updateQuantity = useCallback(
@@ -293,7 +280,7 @@ export function CartProvider({ children }) {
         );
       });
 
-      void requestShopifyCart("PATCH", {
+      void updateShopifyCartItemQuantity({
         variantNumericId,
         quantity: normalizedQuantity,
       })
@@ -302,7 +289,7 @@ export function CartProvider({ children }) {
           void reloadShopifyCart();
         });
     },
-    [applyShopifyCart, isLoggedIn, reloadShopifyCart, requestShopifyCart]
+    [applyShopifyCart, isLoggedIn, reloadShopifyCart]
   );
 
   const removeItem = useCallback(
@@ -313,13 +300,13 @@ export function CartProvider({ children }) {
       }
 
       setItems((current) => current.filter((item) => item.variantNumericId !== variantNumericId));
-      void requestShopifyCart("DELETE", { variantNumericId })
+      void removeShopifyCartItem(variantNumericId)
         .then((cart) => applyShopifyCart(cart))
         .catch(() => {
           void reloadShopifyCart();
         });
     },
-    [applyShopifyCart, isLoggedIn, reloadShopifyCart, requestShopifyCart]
+    [applyShopifyCart, isLoggedIn, reloadShopifyCart]
   );
 
   const clearCart = useCallback(() => {
@@ -330,12 +317,12 @@ export function CartProvider({ children }) {
 
     setItems([]);
     setCheckoutUrl("");
-    void requestShopifyCart("DELETE", {})
+    void clearShopifyCart()
       .then((cart) => applyShopifyCart(cart))
       .catch(() => {
         void reloadShopifyCart();
       });
-  }, [applyShopifyCart, isLoggedIn, reloadShopifyCart, requestShopifyCart]);
+  }, [applyShopifyCart, isLoggedIn, reloadShopifyCart]);
 
   const itemCount = useMemo(
     () => items.reduce((total, item) => total + normalizeQuantity(item.quantity), 0),
@@ -426,4 +413,3 @@ export function useCart() {
   }
   return value;
 }
-

@@ -6,6 +6,7 @@ import { useCart } from "@/components/cart/CartProvider";
 import { useAuth } from "@/components/auth/AuthContext";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { redirectTo, redirectToShopifyLogin } from "@/lib/client/navigation";
 import styles from "./cart.module.css";
 
 function formatMoney(amount, currencyCode = "INR") {
@@ -34,11 +35,11 @@ export default function CartPage() {
     e.preventDefault();
     if (authLoading) return;
     if (!customer) {
-      window.location.assign("/api/auth/shopify/login");
+      redirectToShopifyLogin();
       return;
     }
     if (checkoutUrl) {
-      window.location.assign(checkoutUrl);
+      redirectTo(checkoutUrl);
     }
   }
 

@@ -9,6 +9,15 @@ import {
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { useAuth } from "@/components/auth/AuthContext";
+import {
+  createCustomerAddress,
+  deleteCustomerAddress,
+  fetchCustomerAddresses,
+  fetchCustomerOrders,
+  updateCustomerAddress,
+  updateCustomerProfile,
+} from "@/lib/client/shopifyClient";
+import { replaceTo } from "@/lib/client/navigation";
 import styles from "./profile.module.css";
 
 const customerAccountUrl = "/api/auth/shopify/account";
@@ -74,15 +83,14 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!loading && !customer) {
-      window.location.replace("/");
+      replaceTo("/");
     }
   }, [customer, loading]);
 
   useEffect(() => {
     if (!customer) return;
-    fetch("/api/auth/shopify/orders")
-      .then((r) => r.json())
-      .then((d) => setOrders(d.orders || []))
+    fetchCustomerOrders()
+      .then((data) => setOrders(data))
       .catch(() => setOrders([]))
       .finally(() => setOrdersLoading(false));
   }, [customer]);
@@ -128,14 +136,8 @@ export default function ProfilePage() {
     setAddressesLoading(true);
     setAddressesError("");
     try {
-      const res = await fetch("/api/auth/shopify/addresses");
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.ok) {
-        setAddresses([]);
-        setAddressesError(data?.error || "Unable to fetch addresses.");
-        return;
-      }
-      setAddresses(data.addresses || []);
+      const data = await fetchCustomerAddresses();
+      setAddresses(data);
     } catch {
       setAddresses([]);
       setAddressesError("Unable to fetch addresses.");
@@ -150,17 +152,7 @@ export default function ProfilePage() {
     setProfileError("");
     setProfileMessage("");
     try {
-      const res = await fetch("/api/auth/shopify/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profileForm),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.ok) {
-        const userError = data?.userErrors?.[0]?.message;
-        setProfileError(userError || data?.error || "Failed to update profile.");
-        return;
-      }
+      await updateCustomerProfile(profileForm);
       await refetch();
       setProfileMessage("Profile updated.");
     } catch {
@@ -231,16 +223,10 @@ export default function ProfilePage() {
         payload.addressId = editingAddressId;
       }
 
-      const res = await fetch("/api/auth/shopify/addresses", {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.ok) {
-        const userError = data?.userErrors?.[0]?.message;
-        setAddressesError(userError || data?.error || "Failed to save address.");
-        return;
+      if (method === "PUT") {
+        await updateCustomerAddress(payload);
+      } else {
+        await createCustomerAddress(payload);
       }
       await loadAddresses();
       resetAddressForm();
@@ -257,17 +243,7 @@ export default function ProfilePage() {
     setAddressSaving(true);
     setAddressesError("");
     try {
-      const res = await fetch("/api/auth/shopify/addresses", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ addressId }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.ok) {
-        const userError = data?.userErrors?.[0]?.message;
-        setAddressesError(userError || data?.error || "Failed to delete address.");
-        return;
-      }
+      await deleteCustomerAddress(addressId);
       await loadAddresses();
       if (editingAddressId === addressId) {
         resetAddressForm();

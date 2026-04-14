@@ -60,12 +60,12 @@ export async function GET(request) {
         const refreshed = await refreshAccessToken(refreshToken, appUrl);
         accessToken = refreshed.accessToken;
       } catch {
-        return NextResponse.json({ orders: [] }, { status: 401 });
+        return NextResponse.json({ orders: [] }, { status: 200 });
       }
     }
 
     if (!accessToken) {
-      return NextResponse.json({ orders: [] }, { status: 401 });
+      return NextResponse.json({ orders: [] }, { status: 200 });
     }
 
     let data;
