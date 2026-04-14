@@ -15,12 +15,6 @@ function optionalEnv(name) {
   return (process.env[name] ?? "").trim();
 }
 
-// Private tokens use Shopify-Storefront-Private-Token header
-// Public tokens use X-Shopify-Storefront-Access-Token header
-function isPrivateToken(token) {
-  return token.startsWith("shpss_") || token.startsWith("shpat_");
-}
-
 export function getShopifyConfig() {
   const privateToken = optionalEnv("SHOPIFY_STOREFRONT_PRIVATE_TOKEN");
   const publicToken = optionalEnv("SHOPIFY_STOREFRONT_ACCESS_TOKEN");
@@ -35,14 +29,9 @@ export function getShopifyConfig() {
     );
   }
 
-  const storefrontTokenHeader = isPrivateToken(storefrontAccessToken)
-    ? "Shopify-Storefront-Private-Token"
-    : "X-Shopify-Storefront-Access-Token";
-
   return {
     storeDomain: normalizeStoreDomain(requiredEnv("SHOPIFY_STORE_DOMAIN")),
     storefrontAccessToken,
-    storefrontTokenHeader,
     storefrontApiVersion:
       optionalEnv("SHOPIFY_STOREFRONT_API_VERSION") || DEFAULT_STOREFRONT_API_VERSION,
   };

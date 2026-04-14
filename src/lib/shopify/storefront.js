@@ -1,4 +1,24 @@
 import { getShopifyConfig } from "./config";
+import { createStorefrontApiClient } from "@shopify/storefront-api-client";
+
+const clientCache = new Map();
+
+function getClient({ storeDomain, storefrontAccessToken, storefrontApiVersion, cache }) {
+  const key = `${storeDomain}|${storefrontApiVersion}|${storefrontAccessToken.slice(0, 16)}|${cache}`;
+  const existing = clientCache.get(key);
+  if (existing) return existing;
+
+  const client = createStorefrontApiClient({
+    storeDomain,
+    apiVersion: storefrontApiVersion,
+    privateAccessToken: storefrontAccessToken,
+    retries: 1,
+    customFetchApi: (url, init) => fetch(url, { ...init, cache }),
+  });
+
+  clientCache.set(key, client);
+  return client;
+}
 
 export async function shopifyStorefrontGraphQL({
   query,
@@ -8,7 +28,6 @@ export async function shopifyStorefrontGraphQL({
   const {
     storeDomain,
     storefrontAccessToken,
-    storefrontTokenHeader,
     storefrontApiVersion,
   } = getShopifyConfig();
 
@@ -19,21 +38,17 @@ export async function shopifyStorefrontGraphQL({
     );
   }
 
-  const endpoint = `https://${storeDomain}/api/${storefrontApiVersion}/graphql.json`;
-
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      [storefrontTokenHeader]: storefrontAccessToken,
-    },
-    body: JSON.stringify({ query, variables }),
+  const client = getClient({
+    storeDomain,
+    storefrontAccessToken,
+    storefrontApiVersion,
     cache,
   });
 
-  const payload = await response.json().catch(() => ({}));
+  const result = await client.request(query, { variables });
+  const status = result?.errors?.networkStatusCode || 200;
 
-  if (response.status === 404) {
+  if (status === 404) {
     throw new Error(
       `Storefront API 404 on ${storeDomain}. ` +
       "This usually means: (1) the token is from a different store, or " +
@@ -42,17 +57,23 @@ export async function shopifyStorefrontGraphQL({
     );
   }
 
-  if (response.status === 401 || response.status === 403) {
+  if (status === 401 || status === 403) {
     throw new Error(
-      `Storefront API auth failed (${response.status}) on ${storeDomain}. ` +
+      `Storefront API auth failed (${status}) on ${storeDomain}. ` +
       "Regenerate the Storefront API private token in Shopify Admin -> Sales channels -> Headless."
     );
   }
 
-  if (!response.ok || payload.errors) {
-    const details = payload.errors ? ` ${JSON.stringify(payload.errors)}` : "";
-    throw new Error(`Shopify Storefront API error (${response.status} ${response.statusText}).${details}`);
+  if (result?.errors) {
+    const details = result.errors?.graphQLErrors
+      ? ` ${JSON.stringify(result.errors.graphQLErrors)}`
+      : ` ${result.errors.message || ""}`;
+    throw new Error(`Shopify Storefront API error (${status}).${details}`);
   }
 
-  return payload.data;
+  if (!result?.data) {
+    throw new Error("Shopify Storefront API returned no data.");
+  }
+
+  return result.data;
 }
