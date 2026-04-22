@@ -28,19 +28,19 @@ async function clearAuthSession(request) {
   const postLogoutRedirectUri = `${appUrl}/`;
   const idToken = request.cookies.get(COOKIE_ID_TOKEN)?.value;
   let redirectTarget = postLogoutRedirectUri;
-  try {
-    const openIdConfig = await getOpenIDConfig();
-    const endSessionEndpoint = openIdConfig?.end_session_endpoint;
-    if (endSessionEndpoint) {
-      const logoutUrl = new URL(endSessionEndpoint);
-      if (idToken) {
+  if (idToken) {
+    try {
+      const openIdConfig = await getOpenIDConfig();
+      const endSessionEndpoint = openIdConfig?.end_session_endpoint;
+      if (endSessionEndpoint) {
+        const logoutUrl = new URL(endSessionEndpoint);
         logoutUrl.searchParams.set("id_token_hint", idToken);
+        logoutUrl.searchParams.set("post_logout_redirect_uri", postLogoutRedirectUri);
+        redirectTarget = logoutUrl.toString();
       }
-      logoutUrl.searchParams.set("post_logout_redirect_uri", postLogoutRedirectUri);
-      redirectTarget = logoutUrl.toString();
+    } catch (error) {
+      console.error("[shopify/logout] Failed to prepare hosted logout:", error);
     }
-  } catch (error) {
-    console.error("[shopify/logout] Failed to prepare hosted logout:", error);
   }
 
   const clearOpts = {
