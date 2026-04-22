@@ -261,11 +261,28 @@ export default function ProfilePage() {
     }
   }
 
-  function handleSignOut(event) {
+  async function handleSignOut(event) {
     event.preventDefault();
     if (loggingOut) return;
     setLoggingOut(true);
-    redirectTo("/api/auth/shopify/logout?return_to=/");
+    try {
+      const response = await fetch("/api/auth/shopify/logout", {
+        method: "POST",
+        cache: "no-store",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("logout_failed");
+      }
+      await refetch();
+      replaceTo("/");
+      return;
+    } catch {
+      redirectTo("/api/auth/shopify/logout?return_to=/");
+      return;
+    } finally {
+      setLoggingOut(false);
+    }
   }
 
   // Still loading or redirect pending
@@ -560,16 +577,16 @@ export default function ProfilePage() {
                               <strong>{[address.firstName, address.lastName].filter(Boolean).join(" ") || "Address"}</strong>
                               {address.isDefault && <span className={styles.defaultBadge}>Default</span>}
                             </div>
-                            <div className={styles.addressActions}>
-                              <button type="button" onClick={() => handleEditAddress(address)}>
-                                <Pencil size={13} />
-                                Edit
-                              </button>
-                              <button type="button" onClick={() => handleDeleteAddress(address.id)}>
-                                <Trash2 size={13} />
-                                Delete
-                              </button>
-                            </div>
+                             <div className={styles.addressActions}>
+                               <button type="button" onClick={() => handleEditAddress(address)}>
+                                 <Pencil size={13} />
+                                 <span className={styles.addressActionLabel}>Edit</span>
+                               </button>
+                               <button type="button" onClick={() => handleDeleteAddress(address.id)}>
+                                 <Trash2 size={13} />
+                                 <span className={styles.addressActionLabel}>Delete</span>
+                               </button>
+                             </div>
                           </div>
                           <p className={styles.addressText}>
                             {[
