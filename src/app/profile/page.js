@@ -20,8 +20,6 @@ import {
 import { replaceTo } from "@/lib/client/navigation";
 import styles from "./profile.module.css";
 
-const customerAccountUrl = "/api/auth/shopify/account";
-
 function formatMoney(amount, currencyCode = "INR") {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -67,6 +65,7 @@ export default function ProfilePage() {
   const [addressSaving, setAddressSaving] = useState(false);
   const [addressMode, setAddressMode] = useState("create");
   const [editingAddressId, setEditingAddressId] = useState("");
+  const [loggingOut, setLoggingOut] = useState(false);
   const [addressForm, setAddressForm] = useState({
     firstName: "",
     lastName: "",
@@ -255,6 +254,23 @@ export default function ProfilePage() {
     }
   }
 
+  async function handleSignOut(event) {
+    event.preventDefault();
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth/shopify/logout", {
+        method: "POST",
+        cache: "no-store",
+        credentials: "same-origin",
+      });
+    } catch {
+      // Ignore network failures and still force navigation to logged-out home.
+    } finally {
+      replaceTo("/");
+    }
+  }
+
   // Still loading or redirect pending
   if (loading || !customer) {
     return (
@@ -300,10 +316,10 @@ export default function ProfilePage() {
                 </p>
               </div>
             </div>
-            <a href="/api/auth/shopify/logout" className={styles.logoutBtn}>
+            <button type="button" className={styles.logoutBtn} onClick={handleSignOut} disabled={loggingOut}>
               <LogOut size={14} />
-              Sign out
-            </a>
+              {loggingOut ? "Signing out..." : "Sign out"}
+            </button>
           </div>
 
           {/* Stats row */}
@@ -522,12 +538,6 @@ export default function ProfilePage() {
                   </div>
                 </form>
 
-                <p className={styles.detailsNote}>
-                  You can still manage everything directly in your
-                  <a href={customerAccountUrl} target="_blank" rel="noreferrer">
-                    {" "}Shopify account page
-                  </a>.
-                </p>
               </div>
             </div>
           )}
@@ -722,12 +732,6 @@ export default function ProfilePage() {
                   </form>
                 </div>
 
-                <p className={styles.detailsNote}>
-                  You can also manage addresses in your
-                  <a href={customerAccountUrl} target="_blank" rel="noreferrer">
-                    {" "}Shopify account page
-                  </a>.
-                </p>
               </div>
             </div>
           )}

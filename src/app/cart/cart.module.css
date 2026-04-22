@@ -331,11 +331,17 @@
   border: 0;
   background: #8e0000;
   color: #fff;
+  cursor: pointer;
   transition: background-color 160ms ease;
 }
 
 .primaryBtn:hover {
   background: #700000;
+}
+
+.primaryBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
 }
 
 .secondaryBtn {

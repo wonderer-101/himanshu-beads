@@ -175,7 +175,7 @@ export default function CartPage() {
               type="button"
               className={styles.primaryBtn}
               onClick={handleCheckout}
-              disabled={authLoading || !checkoutUrl}
+              disabled={authLoading}
             >
               Checkout
             </button>
