@@ -17,7 +17,7 @@ import {
   updateCustomerAddress,
   updateCustomerProfile,
 } from "@/lib/client/shopifyClient";
-import { replaceTo } from "@/lib/client/navigation";
+import { redirectTo, replaceTo } from "@/lib/client/navigation";
 import styles from "./profile.module.css";
 
 function formatMoney(amount, currencyCode = "INR") {
@@ -254,21 +254,11 @@ export default function ProfilePage() {
     }
   }
 
-  async function handleSignOut(event) {
+  function handleSignOut(event) {
     event.preventDefault();
     if (loggingOut) return;
     setLoggingOut(true);
-    try {
-      await fetch("/api/auth/shopify/logout", {
-        method: "POST",
-        cache: "no-store",
-        credentials: "same-origin",
-      });
-    } catch {
-      // Ignore network failures and still force navigation to logged-out home.
-    } finally {
-      replaceTo("/");
-    }
+    redirectTo("/api/auth/shopify/logout");
   }
 
   // Still loading or redirect pending

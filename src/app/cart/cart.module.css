@@ -200,31 +200,53 @@
 }
 
 .qtyControl {
-  display: inline-grid;
-  grid-template-columns: 33px 44px 33px;
+  --quantity-selector-width: 118px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: var(--quantity-selector-width);
   border: 1px solid #d8cabc;
-  border-radius: 11px;
-  overflow: hidden;
+  border-radius: 999px;
   background: #fff;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.qtyControl:hover {
+  background: #fdf9f3;
+  border-color: #ccb9a8;
 }
 
 .qtyControl button {
+  width: 34px;
+  height: 34px;
   border: 0;
-  background: #f7f1e9;
+  background: transparent;
   color: #2f241b;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
   cursor: pointer;
   transition: background-color 150ms ease;
 }
 
 .qtyControl button:hover {
-  background: #efe4d8;
+  background: #f1e6da;
+}
+
+.qtyControl button svg {
+  transition: transform 120ms ease;
+}
+
+.qtyControl button:active svg {
+  transform: scale(0.9);
 }
 
 .qtyControl span {
-  display: grid;
-  place-items: center;
+  min-width: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: #2f241b;
   font-family: var(--font-manrope), "Segoe UI", sans-serif;
   font-size: 0.82rem;
@@ -459,7 +481,12 @@
   }
 
   .qtyControl {
-    grid-template-columns: 31px 40px 31px;
+    --quantity-selector-width: 108px;
+  }
+
+  .qtyControl button {
+    width: 31px;
+    height: 31px;
   }
 
   .summaryCard {

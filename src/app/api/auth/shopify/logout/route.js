@@ -4,10 +4,12 @@
  */
 import { NextResponse } from "next/server";
 import {
+  getOpenIDConfig,
   resolveAppUrl,
   serializeCookie,
   COOKIE_ACCESS_TOKEN,
   COOKIE_REFRESH_TOKEN,
+  COOKIE_ID_TOKEN,
   COOKIE_RETURN_TO,
 } from "@/lib/shopify/customerAuth";
 
@@ -23,6 +25,24 @@ function buildNoStoreHeaders() {
 
 async function clearAuthSession(request) {
   const appUrl = resolveAppUrl(request);
+  const postLogoutRedirectUri = `${appUrl}/`;
+  const idToken = request.cookies.get(COOKIE_ID_TOKEN)?.value;
+  let redirectTarget = postLogoutRedirectUri;
+  try {
+    const openIdConfig = await getOpenIDConfig();
+    const endSessionEndpoint = openIdConfig?.end_session_endpoint;
+    if (endSessionEndpoint) {
+      const logoutUrl = new URL(endSessionEndpoint);
+      if (idToken) {
+        logoutUrl.searchParams.set("id_token_hint", idToken);
+      }
+      logoutUrl.searchParams.set("post_logout_redirect_uri", postLogoutRedirectUri);
+      redirectTarget = logoutUrl.toString();
+    }
+  } catch (error) {
+    console.error("[shopify/logout] Failed to prepare hosted logout:", error);
+  }
+
   const clearOpts = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -31,11 +51,12 @@ async function clearAuthSession(request) {
     maxAge: 0,
   };
 
-  const response = NextResponse.redirect(`${appUrl}/`);
+  const response = NextResponse.redirect(redirectTarget);
   const noStoreHeaders = buildNoStoreHeaders();
   Object.entries(noStoreHeaders).forEach(([key, value]) => response.headers.set(key, value));
   response.headers.append("Set-Cookie", serializeCookie(COOKIE_ACCESS_TOKEN, "", clearOpts));
   response.headers.append("Set-Cookie", serializeCookie(COOKIE_REFRESH_TOKEN, "", clearOpts));
+  response.headers.append("Set-Cookie", serializeCookie(COOKIE_ID_TOKEN, "", clearOpts));
   response.headers.append("Set-Cookie", serializeCookie(COOKIE_RETURN_TO, "", clearOpts));
   response.headers.append("Set-Cookie", serializeCookie(SHOPIFY_CART_COOKIE, "", clearOpts));
   return response;

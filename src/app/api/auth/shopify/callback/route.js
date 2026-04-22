@@ -13,6 +13,7 @@ import {
   makeTokenCookieOptions,
   COOKIE_ACCESS_TOKEN,
   COOKIE_REFRESH_TOKEN,
+  COOKIE_ID_TOKEN,
   COOKIE_STATE,
   COOKIE_VERIFIER,
   COOKIE_RETURN_TO,
@@ -63,7 +64,7 @@ export async function GET(request) {
     }
 
     // Exchange code for tokens
-    const { accessToken, refreshToken, expiresIn } = await exchangeCodeForToken({
+    const { accessToken, refreshToken, expiresIn, idToken } = await exchangeCodeForToken({
       code,
       codeVerifier,
       redirectUri,
@@ -85,6 +86,13 @@ export async function GET(request) {
       response.headers.append(
         "Set-Cookie",
         serializeCookie(COOKIE_REFRESH_TOKEN, refreshToken, makeTokenCookieOptions(60 * 60 * 24 * 30))
+      );
+    }
+
+    if (idToken) {
+      response.headers.append(
+        "Set-Cookie",
+        serializeCookie(COOKIE_ID_TOKEN, idToken, makeTokenCookieOptions(60 * 60 * 24 * 30))
       );
     }
 

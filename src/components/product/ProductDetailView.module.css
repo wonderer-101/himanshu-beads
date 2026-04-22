@@ -214,40 +214,60 @@
 }
 
 .quantityControl {
+  --quantity-selector-width: 124px;
   margin-top: 0;
-  width: fit-content;
-  display: grid;
-  grid-template-columns: 40px 56px 40px;
+  width: var(--quantity-selector-width);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border: 1px solid #d8cabb;
   border-radius: 999px;
-  overflow: hidden;
   background: #fff;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.quantityControl:hover {
+  background: #fdf9f3;
+  border-color: #ccb9a8;
 }
 
 .qtyBtn {
+  width: 40px;
+  height: 40px;
   border: 0;
-  background: #f8f3ec;
+  background: transparent;
   color: #2d241e;
   cursor: pointer;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
   transition: background-color 150ms ease;
 }
 
 .qtyBtn:hover {
-  background: #efe4d7;
+  background: #f1e6da;
+}
+
+.qtyBtn svg {
+  transition: transform 120ms ease;
+}
+
+.qtyBtn:active svg {
+  transform: scale(0.9);
 }
 
 .quantityControl input {
   border: 0;
-  border-inline: 1px solid #e5d8cb;
   text-align: center;
   font-family: var(--font-manrope), "Segoe UI", sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
   color: #251d16;
   width: 100%;
+  max-width: 44px;
   outline: none;
+  background: transparent;
   appearance: textfield;
   -moz-appearance: textfield;
 }
@@ -311,6 +331,7 @@
 .primaryAction {
   background: #8e0000;
   color: #fff;
+  cursor: pointer;
   box-shadow: 0 8px 20px rgba(142, 0, 0, 0.24);
   transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
@@ -617,7 +638,12 @@
   }
 
   .quantityControl {
-    grid-template-columns: 36px 52px 36px;
+    --quantity-selector-width: 116px;
+  }
+
+  .qtyBtn {
+    width: 36px;
+    height: 36px;
   }
 
   .linePreview {
@@ -719,7 +745,12 @@
   }
 
   .quantityControl {
-    grid-template-columns: 34px 48px 34px;
+    --quantity-selector-width: 108px;
+  }
+
+  .qtyBtn {
+    width: 34px;
+    height: 34px;
   }
 
   .quantityControl input {
