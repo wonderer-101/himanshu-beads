@@ -14,6 +14,7 @@
   overflow: hidden;
   background: #f8f2ea;
   aspect-ratio: 0.82;
+  border: 0.7px solid rgba(125, 80, 46, 0.24);
 }
 
 .mediaImage {
