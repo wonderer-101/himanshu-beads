@@ -4,7 +4,6 @@
  */
 import { NextResponse } from "next/server";
 import {
-  getOpenIDConfig,
   resolveAppUrl,
   serializeCookie,
   COOKIE_ACCESS_TOKEN,
@@ -15,10 +14,12 @@ import {
 
 const SHOPIFY_CART_COOKIE = "hb_shopify_cart_id";
 
-function resolvePostLogoutRedirectUri(appUrl) {
-  const configured = (process.env.SHOPIFY_POST_LOGOUT_REDIRECT_URI || "").trim();
-  if (configured) return configured;
-  return appUrl;
+function normalizeReturnTo(value) {
+  const target = String(value || "").trim();
+  if (!target.startsWith("/")) return "/";
+  if (target.startsWith("//")) return "/";
+  if (/[\r\n]/.test(target)) return "/";
+  return target;
 }
 
 function buildNoStoreHeaders() {
@@ -31,23 +32,9 @@ function buildNoStoreHeaders() {
 
 async function clearAuthSession(request) {
   const appUrl = resolveAppUrl(request);
-  const postLogoutRedirectUri = resolvePostLogoutRedirectUri(appUrl);
-  const idToken = request.cookies.get(COOKIE_ID_TOKEN)?.value;
-  let redirectTarget = `${appUrl}/`;
-  if (idToken) {
-    try {
-      const openIdConfig = await getOpenIDConfig();
-      const endSessionEndpoint = openIdConfig?.end_session_endpoint;
-      if (endSessionEndpoint) {
-        const logoutUrl = new URL(endSessionEndpoint);
-        logoutUrl.searchParams.set("id_token_hint", idToken);
-        logoutUrl.searchParams.set("post_logout_redirect_uri", postLogoutRedirectUri);
-        redirectTarget = logoutUrl.toString();
-      }
-    } catch (error) {
-      console.error("[shopify/logout] Failed to prepare hosted logout:", error);
-    }
-  }
+  const requestUrl = new URL(request.url);
+  const returnTo = normalizeReturnTo(requestUrl.searchParams.get("return_to"));
+  const redirectTarget = `${appUrl}${returnTo}`;
 
   const clearOpts = {
     httpOnly: true,

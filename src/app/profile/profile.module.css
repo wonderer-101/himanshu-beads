@@ -579,6 +579,13 @@
   box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.12);
 }
 
+.formField input[readonly] {
+  background: #f5eee5;
+  color: #6c5b50;
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
 .formActions {
   margin-top: 0.8rem;
   display: flex;
