@@ -261,28 +261,11 @@ export default function ProfilePage() {
     }
   }
 
-  async function handleSignOut(event) {
+  function handleSignOut(event) {
     event.preventDefault();
     if (loggingOut) return;
     setLoggingOut(true);
-    try {
-      const response = await fetch("/api/auth/shopify/logout", {
-        method: "POST",
-        cache: "no-store",
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("logout_failed");
-      }
-      await refetch();
-      replaceTo("/");
-      return;
-    } catch {
-      redirectTo("/api/auth/shopify/logout?return_to=/");
-      return;
-    } finally {
-      setLoggingOut(false);
-    }
+    redirectTo("/api/auth/shopify/logout?hosted=1&return_to=/");
   }
 
   // Still loading or redirect pending
