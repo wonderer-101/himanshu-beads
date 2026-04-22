@@ -61,23 +61,6 @@
 }
 .reviewName { margin: 0; font-size: 0.74rem; font-weight: 700; color: #800000; }
 .reviewName span { color: #79665a; font-weight: 500; }
-.dots {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-top: 12px;
-}
-.dot {
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  height: 3px;
-  width: 18px;
-  border-radius: 999px;
-  background: #dfd0c4;
-  transition: width 220ms, background 220ms;
-}
-.dot[data-active="true"] { width: 30px; background: #800000; }
 
 /* ---- FAQ ---- */
 .faqList { display: flex; flex-direction: column; gap: 8px; }
@@ -164,7 +147,6 @@
   .reviewsTrack {
     --review-card-width: 280px;
   }
-  .dots { display: none; }
 }
 @media (max-width: 900px) {
   .trustGrid { grid-template-columns: repeat(2, 1fr); }

@@ -41,9 +41,11 @@
 .heading {
   margin: 0;
   color: #1d1510;
-  font-family: var(--font-cormorant), Georgia, serif;
-  font-size: clamp(2rem, 3vw, 2.7rem);
-  line-height: 1;
+  font-family: var(--font-manrope), "Segoe UI", sans-serif;
+  font-size: clamp(1.7rem, 2.4vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
 }
 
 .helper {
@@ -113,7 +115,7 @@
   box-shadow: 0 10px 24px rgba(64, 24, 8, 0.06);
   padding: 0.78rem;
   display: grid;
-  grid-template-columns: 108px minmax(0, 1fr);
+  grid-template-columns: 64px minmax(0, 1fr);
   gap: 0.78rem;
 }
 
@@ -143,46 +145,32 @@
 
 .itemInfo {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.82rem;
+}
+
+.itemTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.6rem;
 }
 
 .itemTitle {
   color: #1f1712;
-  font-family: var(--font-cormorant), Georgia, serif;
-  font-size: clamp(1.18rem, 2vw, 1.5rem);
-  line-height: 1.08;
-  font-weight: 700;
-}
-
-.itemMeta {
-  margin: 0.35rem 0 0;
-  color: #78685a;
   font-family: var(--font-manrope), "Segoe UI", sans-serif;
-  font-size: 0.78rem;
-  font-weight: 600;
-}
-
-.priceBlock {
-  margin-top: 0.38rem;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.lineTotalLabel {
-  color: #8d7b6d;
-  font-family: var(--font-manrope), "Segoe UI", sans-serif;
-  font-size: 0.72rem;
+  font-size: clamp(0.98rem, 1.35vw, 1.1rem);
+  line-height: 1.32;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .itemPrice {
   margin: 0;
   color: #241912;
   font-family: var(--font-manrope), "Segoe UI", sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   line-height: 1.05;
   font-weight: 800;
   letter-spacing: -0.012em;
@@ -192,10 +180,10 @@
 }
 
 .itemActions {
-  margin-top: 0.58rem;
+  margin-top: 0;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 0.62rem;
 }
 
@@ -205,6 +193,7 @@
   align-items: center;
   justify-content: space-between;
   width: var(--quantity-selector-width);
+  height: 34px;
   border: 1px solid #d8cabc;
   border-radius: 999px;
   background: #fff;
@@ -217,8 +206,8 @@
 }
 
 .qtyControl button {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border: 0;
   background: transparent;
   color: #2f241b;
@@ -258,7 +247,8 @@
   background: #fff8f8;
   color: #8d1f1f;
   border-radius: 999px;
-  padding: 0.34rem 0.66rem;
+  height: 34px;
+  padding: 0 0.66rem;
   font-family: var(--font-manrope), "Segoe UI", sans-serif;
   font-size: 0.77rem;
   font-weight: 700;
@@ -272,6 +262,10 @@
 .removeBtn:hover {
   background: #fff0f0;
   border-color: #e9bcbc;
+}
+
+.removeText {
+  display: inline;
 }
 
 .summaryCard {
@@ -471,25 +465,51 @@
 
 @media (max-width: 620px) {
   .itemCard {
-    grid-template-columns: 84px minmax(0, 1fr);
+    grid-template-columns: 52px minmax(0, 1fr);
     padding: 0.65rem;
     border-radius: 15px;
   }
 
   .itemPrice {
-    font-size: 1.06rem;
+    font-size: 0.98rem;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .itemTop {
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .itemTitle {
+    font-size: 0.94rem;
+    line-height: 1.28;
   }
 
   .qtyControl {
-    --quantity-selector-width: 108px;
+    --quantity-selector-width: 104px;
+    height: 32px;
   }
 
   .qtyControl button {
-    width: 31px;
-    height: 31px;
+    width: 30px;
+    height: 30px;
   }
 
   .summaryCard {
     border-radius: 15px;
+  }
+
+  .removeBtn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .removeText {
+    display: none;
   }
 }

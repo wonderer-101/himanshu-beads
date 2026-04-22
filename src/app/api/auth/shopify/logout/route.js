@@ -15,6 +15,12 @@ import {
 
 const SHOPIFY_CART_COOKIE = "hb_shopify_cart_id";
 
+function resolvePostLogoutRedirectUri(appUrl) {
+  const configured = (process.env.SHOPIFY_POST_LOGOUT_REDIRECT_URI || "").trim();
+  if (configured) return configured;
+  return appUrl;
+}
+
 function buildNoStoreHeaders() {
   return {
     "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
@@ -25,9 +31,9 @@ function buildNoStoreHeaders() {
 
 async function clearAuthSession(request) {
   const appUrl = resolveAppUrl(request);
-  const postLogoutRedirectUri = `${appUrl}/`;
+  const postLogoutRedirectUri = resolvePostLogoutRedirectUri(appUrl);
   const idToken = request.cookies.get(COOKIE_ID_TOKEN)?.value;
-  let redirectTarget = postLogoutRedirectUri;
+  let redirectTarget = `${appUrl}/`;
   if (idToken) {
     try {
       const openIdConfig = await getOpenIDConfig();

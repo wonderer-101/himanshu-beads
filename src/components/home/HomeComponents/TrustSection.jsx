@@ -45,7 +45,6 @@ function Testimonials() {
   const adjustingRef = useRef(false);
 
   const renderedReviews = isMobile ? LOOPED_REVIEWS : REVIEWS;
-  const dot = ((virtualIndex % REVIEWS.length) + REVIEWS.length) % REVIEWS.length;
 
   const stopAuto = useCallback(() => {
     if (autoTimerRef.current) {
@@ -154,22 +153,6 @@ function Testimonials() {
             <p className={styles.reviewText}>{item.review}</p>
             <p className={styles.reviewName}>{item.name} <span>/ {item.location}</span></p>
           </article>
-        ))}
-      </div>
-      <div className={styles.dots} aria-hidden="true">
-        {REVIEWS.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            className={styles.dot}
-            data-active={dot === i ? "true" : "false"}
-            onClick={() => {
-              const target = isMobile ? (MIDDLE_BLOCK_START + i) : i;
-              setVirtualIndex(target);
-              scrollToIndex(ref.current, target, "smooth");
-              startAuto();
-            }}
-          />
         ))}
       </div>
     </div>

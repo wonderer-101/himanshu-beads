@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import styles from "./HeroSection.module.css";
 
 const SLIDES = [
@@ -31,7 +32,7 @@ function Tile({ type, active = true }) {
       <article className={styles.tile + " " + styles.tileRight} data-active={activeState}>
         <div className={styles.overlay}>
           <h2 className={styles.h2}>Rare Discoveries</h2>
-          <a className={styles.shopBtn} href="#collections">Shop Now</a>
+          <Link className={styles.shopBtn} href="/collections">Shop Now</Link>
         </div>
       </article>
     );

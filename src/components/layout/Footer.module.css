@@ -80,9 +80,13 @@
 
   .footer-grid {
     grid-template-columns: 1fr;
-    max-width: 420px;
-    margin-inline: auto;
+    max-width: none;
+    margin-inline: 0;
     row-gap: 1rem;
+  }
+
+  .footer-grid section {
+    text-align: left;
   }
 
   .footer-bottom {
