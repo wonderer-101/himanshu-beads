@@ -12,9 +12,15 @@
   font-size: clamp(1.8rem, 2.8vw, 2.6rem);
   color: #231812;
   line-height: 1.1;
+  text-align: center;
 }
 
 /* ---- Testimonials ---- */
+.reviewsWrap {
+  display: flex;
+  flex-direction: column;
+}
+
 .reviewsTrack {
   --review-card-width: 240px;
   display: flex;
@@ -61,6 +67,59 @@
 }
 .reviewName { margin: 0; font-size: 0.74rem; font-weight: 700; color: #800000; }
 .reviewName span { color: #79665a; font-weight: 500; }
+
+.desktopCarousel {
+  position: relative;
+  width: min(980px, 100%);
+  margin: 0 auto;
+  padding-inline: 3.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.desktopReviewCard {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  min-height: 270px;
+}
+
+.desktopReviewCard .avatar {
+  width: 100px;
+  height: 100px;
+}
+
+.desktopNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid #e2d3c4;
+  background: #fff;
+  color: #800000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.desktopNav:hover {
+  background: #fff7ef;
+  border-color: #d4bca9;
+  transform: translateY(calc(-50% - 1px));
+}
+
+.desktopNavPrev {
+  left: 0;
+}
+
+.desktopNavNext {
+  right: 0;
+}
 
 /* ---- FAQ ---- */
 .faqList { display: flex; flex-direction: column; gap: 8px; }
@@ -153,6 +212,9 @@
 }
 @media (max-width: 767px) {
   .section { gap: 1.6rem; padding-inline: 0.9rem; }
+  .desktopCarousel {
+    display: none;
+  }
   .reviewsTrack {
     --review-card-width: min(82vw, 300px);
     scroll-padding-inline: calc((100% - var(--review-card-width)) / 2);

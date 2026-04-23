@@ -290,7 +290,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, 194px);
   justify-content: start;
-  gap: 0.8rem;
+  column-gap: 0.8rem;
+  row-gap: 2.4rem;
 }
 
 .card {
@@ -470,6 +471,7 @@
   }
 
   .grid {
-    gap: 0.6rem;
+    column-gap: 0.6rem;
+    row-gap: 1.8rem;
   }
 }

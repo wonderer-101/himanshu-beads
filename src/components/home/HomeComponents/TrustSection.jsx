@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import styles from "./TrustSection.module.css";
 
 // -- Testimonials --------------------------------------------------------
@@ -39,6 +39,7 @@ function scrollToIndex(el, index, behavior = "smooth") {
 
 function Testimonials() {
   const [virtualIndex, setVirtualIndex] = useState(MIDDLE_BLOCK_START);
+  const [desktopIndex, setDesktopIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const ref = useRef(null);
   const autoTimerRef = useRef(null);
@@ -55,15 +56,19 @@ function Testimonials() {
 
   const startAuto = useCallback(() => {
     stopAuto();
-    if (!isMobile) return;
 
     autoTimerRef.current = setInterval(() => {
-      setVirtualIndex((prev) => {
-        const next = prev + 1;
-        scrollToIndex(ref.current, next, "smooth");
-        return next;
-      });
-    }, 3200);
+      if (isMobile) {
+        setVirtualIndex((prev) => {
+          const next = prev + 1;
+          scrollToIndex(ref.current, next, "smooth");
+          return next;
+        });
+        return;
+      }
+
+      setDesktopIndex((prev) => (prev + 1) % REVIEWS.length);
+    }, isMobile ? 3200 : 8000);
   }, [isMobile, stopAuto]);
 
   useEffect(() => {
@@ -132,29 +137,88 @@ function Testimonials() {
     return () => stopAuto();
   }, [startAuto, stopAuto]);
 
+  const activeDesktopReview = REVIEWS[desktopIndex];
+
+  const goPrevDesktop = () => {
+    setDesktopIndex((prev) => (prev - 1 + REVIEWS.length) % REVIEWS.length);
+  };
+
+  const goNextDesktop = () => {
+    setDesktopIndex((prev) => (prev + 1) % REVIEWS.length);
+  };
+
   return (
     <div className={styles.reviewsWrap}>
       <h2 className={styles.sectionHeading}>Our Clients Love</h2>
-      <div
-        ref={ref}
-        className={styles.reviewsTrack}
-        onScroll={handleScroll}
-        onTouchStart={stopAuto}
-        onTouchEnd={startAuto}
-        role="list"
-        aria-label="Customer reviews"
-      >
-        {renderedReviews.map((item, i) => (
-          <article key={`${item.name}-${i}`} className={styles.reviewCard} role="listitem">
-            <img className={styles.avatar} src={item.image} alt={item.name} loading="lazy" />
+      {isMobile ? (
+        <div
+          ref={ref}
+          className={styles.reviewsTrack}
+          onScroll={handleScroll}
+          onTouchStart={stopAuto}
+          onTouchEnd={startAuto}
+          role="list"
+          aria-label="Customer reviews"
+        >
+          {renderedReviews.map((item, i) => (
+            <article key={`${item.name}-${i}`} className={styles.reviewCard} role="listitem">
+              <img className={styles.avatar} src={item.image} alt={item.name} loading="lazy" />
+              <div className={styles.stars} aria-label="5 stars">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <Star key={i} size={13} fill="currentColor" strokeWidth={0} />
+                ))}
+              </div>
+              <p className={styles.reviewText}>{item.review}</p>
+              <p className={styles.reviewName}>
+                {item.name} <span>/ {item.location}</span>
+              </p>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div
+          className={styles.desktopCarousel}
+          aria-label="Customer reviews carousel"
+          onMouseEnter={stopAuto}
+          onMouseLeave={startAuto}
+        >
+          <button
+            type="button"
+            className={`${styles.desktopNav} ${styles.desktopNavPrev}`}
+            onClick={goPrevDesktop}
+            aria-label="Previous review"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          <article className={`${styles.reviewCard} ${styles.desktopReviewCard}`} role="listitem">
+            <img
+              className={styles.avatar}
+              src={activeDesktopReview.image}
+              alt={activeDesktopReview.name}
+              loading="lazy"
+            />
             <div className={styles.stars} aria-label="5 stars">
-              {[0,1,2,3,4].map((i) => <Star key={i} size={13} fill="currentColor" strokeWidth={0} />)}
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Star key={i} size={13} fill="currentColor" strokeWidth={0} />
+              ))}
             </div>
-            <p className={styles.reviewText}>{item.review}</p>
-            <p className={styles.reviewName}>{item.name} <span>/ {item.location}</span></p>
+            <p className={styles.reviewText}>{activeDesktopReview.review}</p>
+            <p className={styles.reviewName}>
+              {activeDesktopReview.name} <span>/ {activeDesktopReview.location}</span>
+            </p>
           </article>
-        ))}
-      </div>
+
+          <button
+            type="button"
+            className={`${styles.desktopNav} ${styles.desktopNavNext}`}
+            onClick={goNextDesktop}
+            aria-label="Next review"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

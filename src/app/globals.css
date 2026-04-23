@@ -13,6 +13,11 @@ body {
   overflow-x: hidden;
 }
 
+:root {
+  --font-manrope: var(--font-headland);
+  --font-cormorant: var(--font-headland);
+}
+
 html {
   scrollbar-gutter: stable;
   scrollbar-width: thin;

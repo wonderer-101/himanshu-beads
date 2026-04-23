@@ -81,6 +81,8 @@
 }
 
 .mainMedia {
+  width: min(100%, 80%);
+  margin-inline: auto;
   border-radius: 18px;
   overflow: hidden;
   background: #f4ede3;

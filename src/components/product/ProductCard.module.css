@@ -87,8 +87,8 @@
   margin-top: 0.52rem;
   color: #171717;
   font-family: var(--font-cormorant), Georgia, serif;
-  font-size: clamp(0.98rem, 1.3vw, 1.28rem);
-  line-height: 1.18;
+  font-size: clamp(0.9rem, 1.05vw, 1.1rem);
+  line-height: 1.16;
   font-weight: 600;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -111,10 +111,15 @@
   color: #24a16d;
 }
 
+.stars svg {
+  width: 10px;
+  height: 10px;
+}
+
 .reviewCount {
   color: #1c1c1c;
   font-family: var(--font-manrope), "Segoe UI", sans-serif;
-  font-size: 0.84rem;
+  font-size: 0.72rem;
   line-height: 1;
   font-weight: 600;
 }
@@ -129,7 +134,7 @@
 .price {
   color: #1d1611;
   font-family: var(--font-manrope), "Segoe UI", sans-serif;
-  font-size: clamp(1.14rem, 1.32vw, 1.32rem);
+  font-size: clamp(0.94rem, 1vw, 1.06rem);
   line-height: 1.05;
   font-weight: 800;
   letter-spacing: -0.015em;
@@ -204,7 +209,7 @@
 
   .title {
     margin-top: 0.4rem;
-    font-size: 0.96rem;
+    font-size: 0.86rem;
     line-height: 1.16;
   }
 
@@ -214,16 +219,16 @@
   }
 
   .stars svg {
-    width: 11px;
-    height: 11px;
+    width: 9px;
+    height: 9px;
   }
 
   .reviewCount {
-    font-size: 0.7rem;
+    font-size: 0.62rem;
   }
 
   .price {
-    font-size: 0.98rem;
+    font-size: 0.86rem;
   }
 
   .oldPrice {
@@ -253,11 +258,20 @@
   }
 
   .title {
-    font-size: 0.88rem;
+    font-size: 0.8rem;
+  }
+
+  .stars svg {
+    width: 8px;
+    height: 8px;
+  }
+
+  .reviewCount {
+    font-size: 0.58rem;
   }
 
   .price {
-    font-size: 0.94rem;
+    font-size: 0.82rem;
   }
 
   .oldPrice {

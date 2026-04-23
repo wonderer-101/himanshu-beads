@@ -35,7 +35,8 @@
   margin: 0.95rem auto 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 0.9rem;
+  column-gap: 0.9rem;
+  row-gap: 2.6rem;
 }
 
 .card {
@@ -128,7 +129,8 @@
     width: min(1200px, 94vw);
     margin-top: 0.8rem;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.64rem;
+    column-gap: 0.64rem;
+    row-gap: 1.9rem;
   }
 
   .cardLink {
@@ -145,4 +147,3 @@
     min-height: 1.95rem;
   }
 }
-

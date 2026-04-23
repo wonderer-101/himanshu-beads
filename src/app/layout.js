@@ -1,18 +1,12 @@
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Headland_One } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { AuthProvider } from "@/components/auth/AuthContext";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+const headlandOne = Headland_One({
+  variable: "--font-headland",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
-});
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "400",
 });
 
 export const metadata = {
@@ -23,7 +17,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${manrope.variable}`}>
+    <html lang="en" className={headlandOne.variable}>
       <body>
         <AuthProvider>
           <CartProvider>{children}</CartProvider>
